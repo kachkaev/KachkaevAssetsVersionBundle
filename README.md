@@ -4,7 +4,7 @@ KachkaevAssetsVersionBundle
 Overview
 --------
 
-The main objective of this Symfony2 bundle is to automate the process of updating assets version each time it needs to be changed (doing this manually is a real pain).
+The purpose of this Symfony2 bundle is to automate the process of updating assets version each time it needs to be changed (doing this manually is a real pain).
 
 The bundle can read and write ``assets_version`` parameter in ``app/config/parameters.yml`` from symfony console. One of the advantages of the bundle is that it does not break existing formatting in the yaml file.
 
@@ -31,7 +31,7 @@ Installation
 
 ### Composer
 
-Add the following dependency to your projects composer.json file:
+Add the following dependency to your project’s composer.json file:
 
 ```js
     "require": {
@@ -46,7 +46,7 @@ Now tell composer to download the bundle by running the command:
 $ php composer.phar update kachkaev/assets-version-bundle
 ```
 
-Composer will install the bundle to your project's `vendor/kachkaev` directory.
+Composer will install the bundle to `vendor/kachkaev` directory.
 
 ### Adding bundle to your application kernel
 
@@ -71,8 +71,8 @@ Here is the default configuration for the bundle:
 ```yml
 kachkaev_assets_version:
     filename: %kernel.root_dir%/config/parameters.yml          # name of the file where application parameters are stored
-    parametername: assets_version                              # name of property defining assets version in that file
-    manager: Kachkaev\AssetsVersionBundle\AssetsVersionManager # Class of version manaer
+    parametername: assets_version                              # name of property that defines assets version in that file
+    manager: Kachkaev\AssetsVersionBundle\AssetsVersionManager # location of version manager
 ```
 
 In most cases custom configuration is not needed, so simply add the following line to your ``app/config/config.yml``:
@@ -107,8 +107,8 @@ Please don’t forget to clear product cache by calling ``php app/console cache:
 If you are using assetic bundle and want to change asset version after each dump, you may find useful the following shell script:
 
 ```bash
-    # bin/update_assets
-    php app/console assets_version:increment --env=prod
-    php app/console cache:clear --env=prod --no-debug
-    php app/console assetic:dump --env=prod --no-debug
+# bin/update_assets
+php app/console assets_version:increment --env=prod
+php app/console cache:clear --env=prod --no-debug
+php app/console assetic:dump --env=prod --no-debug
 ```
