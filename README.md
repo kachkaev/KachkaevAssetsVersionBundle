@@ -113,6 +113,6 @@ If you are using assetic bundle and want to change asset version after each dump
 ```bash
 # bin/update_assets
 php app/console assets_version:increment --env=prod
-php app/console cache:clear --env=prod --no-debug
-php app/console assetic:dump --env=prod --no-debug
+php app/console cache:clear --env=prod
+php app/console assetic:dump --env=prod
 ```
