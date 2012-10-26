@@ -1,0 +1,11 @@
+parameters:
+    kachkaev_assets_version.filename: %kernel.root_dir%/config/parameters.yml
+    kachkaev_assets_version.parametername: assets_version
+    kachkaev_assets_version.manager.class: Kachkaev\AssetsVersionBundle\AssetsVersionManager
+    
+services:
+    kachkaev_assets_version.assets_version_manager:
+        class: %kachkaev_assets_version.manager.class%
+        arguments:
+            - %kachkaev_assets_version.filename%
+            - %kachkaev_assets_version.parametername%
