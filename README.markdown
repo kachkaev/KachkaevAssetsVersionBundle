@@ -10,12 +10,12 @@ So, if you configuration looks the following way:
     # app/config/config.yml
     framework:
         templating:      { engines: ['twig'], assets_version: %assets_version% }
-        # ..
+        # ...
 
     # app/config/parameters.yml
     parameters:
         assets_version: v42
-        # ..
+        # ...
 
 then you can simply call ``php app/console assets_version:increment`` to change version ``v42`` to ``v43``. It is important to clear ``prod`` cache afterwards, this is not done automatically. Additional features are described below.
 
@@ -27,9 +27,9 @@ Installation
 Add the following dependencies to your projects composer.json file:
 
     "require": {
-        # ..
+        # ...
         "kachkaev/assets-version-bundle": "dev-master"
-        # ..
+        # ...
     }
 
 ### Adding bundle to your application kernel
@@ -38,9 +38,11 @@ Add the following dependencies to your projects composer.json file:
 
     public function registerBundles()
     {
-        // ...
-        $bundles[] = new Kachkaev\AssetsVersionBundle($this);
-        // ...
+        $bundles = array(
+            // ...
+            new Kachkaev\AssetsVersionBundle\KachkaevAssetsVersionBundle(),
+            // ...
+        );
     }
 
 Configuration

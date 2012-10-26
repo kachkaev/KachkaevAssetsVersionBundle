@@ -26,6 +26,7 @@
     },
 
     "suggest": {
+        "symfony/assetic-bundle": "Integrates Assetic into Symfony2"
     },
 
     "autoload": {
