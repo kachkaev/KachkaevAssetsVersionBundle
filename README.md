@@ -91,13 +91,17 @@ The bundle adds two commands to symfony console: ``assets_version:increment`` an
 $ php app/console assets_version:increment
 
 # Increments assets version by 10 (e.g. was 42, became 52)
-$ php app/console assets_version:increment --delta=10
+$ php app/console assets_version:increment 10
 
 # Sets version to "1970-01-01_0000"
 $ php app/console assets_version:set 1970-01-01_0000
 
 # Sets version to "abcDEF-something_else"
 $ php app/console assets_version:set abcDEF-something_else
+
+# Decrements assets version by 10 (e.g. was lorem.ipsum.0.42, became lorem.ipsum.0.32)
+# Note two dashes before the argument that prevent symfony from parsing -1 as an option
+$ php app/console assets_version:increment -- -10
 ```
 
 Value for assets version must consist only of letters, numbers and the following characters: ``.-_``. Incrementing only works when existing value is integer or has integer ending.

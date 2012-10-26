@@ -54,7 +54,7 @@ class AssetsVersionManager
         // Checking value
         if (!preg_match('/^' . static::$versionMask . '$/', $value)) {
             throw new \InvalidArgumentException(
-                    'Wrong value for assets version. It must consist only of letters, numbers and the following characters: .-_');
+                    'Wrong value for assets version: "'.$value.'". It must consist only of letters, numbers and the following characters: .-_');
         }
 
         // Checking if file is writable
