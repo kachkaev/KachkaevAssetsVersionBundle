@@ -98,9 +98,16 @@ class AssetsVersionManager
                             . $this->versionValue
                             . '" - it should be integer or at least have integer ending.');
         }
-
+        
+        $newValue = max(0, $matches[2] + $delta).'';
+        
+        // Preserving leading zeros
+        if ($matches[2][0] == '0') {
+            $newValue = str_pad($newValue, strlen($matches[2]), '0', STR_PAD_LEFT);
+        }
+        
         // Saving new value
-        $this->setVersion($matches[1] . max(0, $matches[2] + $delta));
+        $this->setVersion($matches[1] . $newValue);
     }
 
     /**
