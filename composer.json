@@ -27,7 +27,7 @@
 
     "suggest": {
         "symfony/twig-bundle": ">=2.1.0,<2.3-dev",
-        "symfony/assetic-bundle": "2.1.*"
+        "symfony/assetic-bundle": ">=2.1.0,<2.3-dev"
     },
 
     "autoload": {
