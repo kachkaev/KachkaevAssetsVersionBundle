@@ -26,6 +26,8 @@ parameters:
 
 then you can simply call ``php app/console assets_version:increment`` to change version ``v42`` to ``v43``. It is important to clear ``prod`` cache afterwards, this is not done automatically. More features are described below.
 
+Detailed information on using assets versioning can be found in symfony documentation: http://symfony.com/doc/current/reference/configuration/framework.html#ref-framework-assets-version
+
 Installation
 ------------
 
@@ -80,6 +82,7 @@ In most cases custom configuration is not needed, so simply add the following li
 ```yml
 kachkaev_assets_version: ~
 ```
+It is not recommended to store real value of assets version in ``config.yml`` because its incrementing  will cause git conflicts (presumably you are having ``parameters.yml`` in ``.gitignore`` and ``parameters.yml.dist`` is under version control instead).
 
 Usage
 -----
@@ -96,7 +99,7 @@ $ php app/console assets_version:increment 10
 # Sets version to "1970-01-01_0000"
 $ php app/console assets_version:set 1970-01-01_0000
 
-# Sets version to "abcDEF-something_else"
+# Sets version to "abcDEF-something_else" (no numbers; assets_version:increment will stop working)
 $ php app/console assets_version:set abcDEF-something_else
 
 # Decrements assets version by 10 (e.g. was lorem.ipsum.0.42, became lorem.ipsum.0.32)
@@ -106,13 +109,13 @@ $ php app/console assets_version:increment -- -10
 
 Value for assets version must consist only of letters, numbers and the following characters: ``.-_``. Incrementing only works when existing value is integer or has integer ending.
 
-Please don’t forget to clear product cache by calling ``php app/console cache:clear --env=prod`` for changes to take effect in the production environment.
+Please don’t forget to clear cache by calling ``php app/console cache:clear --env=prod`` for changes to take effect in the production environment.
 
-If you are using assetic bundle and want to change asset version after each dump, you may find useful the following shell script:
+If you are using assetic bundle on your production server and want to change asset version at each dump automatically, you may find useful the following shell script:
 
 ```bash
 # bin/update_assets
 php app/console assets_version:increment --env=prod
-php app/console cache:clear --env=prod --no-debug
-php app/console assetic:dump --env=prod --no-debug
+php app/console cache:clear --env=prod
+php app/console assetic:dump --env=prod
 ```
