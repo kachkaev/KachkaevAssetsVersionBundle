@@ -82,7 +82,7 @@ In most cases custom configuration is not needed, so simply add the following li
 ```yml
 kachkaev_assets_version: ~
 ```
-It is not recommended to store real value of assets version in ``config.yml`` because its incrementing  will cause git conflicts (presumably you are having ``parameters.ini`` in ``.gitignore`` and ``parameters.ini.dist`` is under version control instead).
+It is not recommended to store real value of assets version in ``config.yml`` because its incrementing  will cause git conflicts (presumably you are having ``parameters.yml`` in ``.gitignore`` and ``parameters.yml.dist`` is under version control instead).
 
 Usage
 -----
