@@ -26,6 +26,8 @@ parameters:
 
 then you can simply call ``php app/console assets_version:increment`` to change version ``v42`` to ``v43``. It is important to clear ``prod`` cache afterwards, this is not done automatically. More features are described below.
 
+Detailed information on using assets versioning can be found in symfony documentation: http://symfony.com/doc/current/reference/configuration/framework.html#ref-framework-assets-version
+
 Installation
 ------------
 
