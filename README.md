@@ -1,14 +1,9 @@
 KachkaevAssetsVersionBundle
 ===========================
 
-[![Build Status](https://secure.travis-ci.org/kachkaev/KachkaevAssetsVersionBundle.png)](http://travis-ci.org/kachkaev/KachkaevAssetsVersionBundle)
+The purpose of this Symfony2 bundle is to automate the process of updating assets version each time it needs to be changed − doing this manually is a real pain.
 
-Overview
---------
-
-The purpose of this Symfony2 bundle is to automate the process of updating assets version each time it needs to be changed (doing this manually is a real pain).
-
-The bundle can read and write ``assets_version`` parameter in ``app/config/parameters.yml`` from symfony console. One of the advantages of the bundle is that it does not break existing formatting in the yaml file.
+The bundle can read and write ``assets_version`` parameter in ``app/config/parameters.yml`` from Symfony console. One of the advantages of the bundle is that it does not break existing formatting in the yaml file, all user comments are also kept.
 
 So, if you configuration looks the following way:
 
@@ -26,9 +21,11 @@ parameters:
     # ...
 ```
 
-then you can simply call ``php app/console assets_version:increment`` to change version ``v42`` to ``v43``. It is important to clear ``prod`` cache afterwards, this is not done automatically. More features are described below.
+then you can simply call ``php app/console assets_version:increment`` to change version from ``v42`` to ``v43``. It is important to clear ``prod`` cache afterwards as this is not done automatically. More features are described below.
 
-Detailed information on using assets versioning can be found in symfony documentation: http://symfony.com/doc/current/reference/configuration/framework.html#ref-framework-assets-version
+Detailed information on using assets versioning can be found in Symfony2 documentation: http://symfony.com/doc/current/reference/configuration/framework.html#ref-framework-assets-version
+
+[![Build Status](https://secure.travis-ci.org/kachkaev/KachkaevAssetsVersionBundle.png)](http://travis-ci.org/kachkaev/KachkaevAssetsVersionBundle)
 
 Installation
 ------------
@@ -84,7 +81,7 @@ In most cases custom configuration is not needed, so simply add the following li
 ```yml
 kachkaev_assets_version: ~
 ```
-It is not recommended to store real value of assets version in ``config.yml`` because its incrementing  will cause git conflicts (presumably you are having ``parameters.yml`` in ``.gitignore`` and ``parameters.yml.dist`` is under version control instead).
+__Note:__ It is not recommended to store real value of assets version in ``config.yml`` because its incrementing  will cause git conflicts. It is better to keep it in ``parameters.yml`` added to ``.gitignore`` and also have ``parameters.yml.dist`` with blank or initial value for assets version.
 
 Usage
 -----
@@ -95,18 +92,21 @@ The bundle adds two commands to symfony console: ``assets_version:increment`` an
 # Increments assets version by 1 (e.g. was v42, became v43)
 $ php app/console assets_version:increment
 
-# Increments assets version by 10 (e.g. was 42, became 52)
+# Increments assets version by 10 (e.g. was 42, became 52; was 0042, became 0052 - leading zeros are kept)
 $ php app/console assets_version:increment 10
 
 # Sets version to "1970-01-01_0000"
 $ php app/console assets_version:set 1970-01-01_0000
 
-# Sets version to "abcDEF-something_else" (no numbers; assets_version:increment will stop working)
+# Sets version to "abcDEF-something_else" (no numeric part, so assets_version:increment will stop working)
 $ php app/console assets_version:set abcDEF-something_else
 
-# Decrements assets version by 10 (e.g. was lorem.ipsum.0.42, became lorem.ipsum.0.32)
+# Decrements assets version by 10 (e.g. was lorem.ipsum.0.15, became lorem.ipsum.0.5)
 # Note two dashes before the argument that prevent symfony from parsing -1 as an option
 $ php app/console assets_version:increment -- -10
+
+# Decrementing version by a number bigger than current version results 0 (e.g. was v0010, became v0000)
+$ php app/console assets_version:increment -- -1000
 ```
 
 Value for assets version must consist only of letters, numbers and the following characters: ``.-_``. Incrementing only works when existing value is integer or has integer ending.
@@ -121,3 +121,5 @@ php app/console assets_version:increment --env=prod
 php app/console cache:clear --env=prod
 php app/console assetic:dump --env=prod
 ```
+
+At the moment the bundle only works with yaml files, but more file types can be added if there is a demand.
