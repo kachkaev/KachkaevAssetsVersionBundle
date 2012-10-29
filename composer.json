@@ -39,5 +39,11 @@
         }
     },
 
-    "target-dir": "Kachkaev/AssetsVersionBundle"
+    "target-dir": "Kachkaev/AssetsVersionBundle",
+
+	"extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        }
+    }
 }
