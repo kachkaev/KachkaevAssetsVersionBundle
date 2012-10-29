@@ -1,28 +1,36 @@
 <?php
 
 namespace Kachkaev\AssetsVersionBundle\Tests;
+use Symfony\Component\Filesystem\Filesystem;
 
 use Kachkaev\AssetsVersionBundle\AssetsVersionManager;
 use Symfony\Component\Finder\Finder;
 
 class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
 {
-    protected $fileName = 'app/cache/test/parameters';//.yml, .xml ...
+    protected $fileName = 'parameters';
     protected $parameterName = 'assets_version';
+    protected $fileDir;
+    
+    protected $fileSystem;
 
     protected $templates;
     protected $supportedFileFormats = array('yml');
 
     public function __construct()
     {
+        $this->fileSystem = new Filesystem();
+        
+        $this->fileDir = sys_get_temp_dir() . '/assets_version_test';
+        
+        $this->fileSystem->mkdir($this->fileDir);
+
         $this->loadTemplates();
     }
 
     public function __destruct()
     {
-        // Deleting all temp files
-        foreach (array_keys($this->templates) as $extension)
-            @unlink($this->fileName . '.' . $extension);
+        $this->fileSystem->remove($this->fileDir);
     }
 
     public function testGetVersion()
@@ -33,8 +41,8 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
                     $this->resetFile('yml', $template, "some-version");
 
                     $manager = new AssetsVersionManager(
-                            $this->fileName . '.' . $currentFormat,
-                            $this->parameterName);
+                            $this->fileDir . '/' . $this->fileName . '.'
+                                    . $currentFormat, $this->parameterName);
                     $this->assertEquals($manager->getVersion(), "some-version");
                 }
             }
@@ -51,8 +59,8 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
                     $this->resetFile('yml', $template, "some-version");
 
                     $manager = new AssetsVersionManager(
-                            $this->fileName . '.' . $currentFormat,
-                            $this->parameterName);
+                            $this->fileDir . '/' . $this->fileName . '.'
+                                    . $currentFormat, $this->parameterName);
 
                     foreach ($versions as $version) {
                         $manager->setVersion($version);
@@ -73,8 +81,8 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
                     $this->resetFile('yml', $template, "some-version");
 
                     $manager = new AssetsVersionManager(
-                            $this->fileName . '.' . $currentFormat,
-                            $this->parameterName);
+                            $this->fileDir . '/' . $this->fileName . '.'
+                                    . $currentFormat, $this->parameterName);
 
                     foreach ($versions as $version) {
                         try {
@@ -114,7 +122,8 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
                             $this->resetFile('yml', $template, $version);
 
                             $manager = new AssetsVersionManager(
-                                    $this->fileName . '.' . $currentFormat,
+                                    $this->fileDir . '/' . $this->fileName
+                                            . '.' . $currentFormat,
                                     $this->parameterName);
 
                             $manager->incrementVersion($increment);
@@ -136,22 +145,22 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
             if (array_key_exists('valid', $this->templates[$currentFormat])) {
                 foreach ($this->templates[$currentFormat]['valid'] as $templateName => $template) {
                     foreach ($versions as $version) {
-                            $this->resetFile('yml', $template, $version);
+                        $this->resetFile('yml', $template, $version);
 
-                            $manager = new AssetsVersionManager(
-                                    $this->fileName . '.' . $currentFormat,
-                                    $this->parameterName);
+                        $manager = new AssetsVersionManager(
+                                $this->fileDir . '/' . $this->fileName . '.'
+                                        . $currentFormat, $this->parameterName);
 
-                            try {
-                                $manager->incrementVersion();
-                            } catch (\UnexpectedValueException $e) {
-                                continue;
-                            }
-                            $this
-                                    ->fail(
-                                            'UnexpectedValueException was expected for '
-                                                    . var_export($version, true)
-                                                    . ' when trying to increment it');
+                        try {
+                            $manager->incrementVersion();
+                        } catch (\UnexpectedValueException $e) {
+                            continue;
+                        }
+                        $this
+                                ->fail(
+                                        'UnexpectedValueException was expected for '
+                                                . var_export($version, true)
+                                                . ' when trying to increment it');
                     }
                 }
             }
@@ -166,27 +175,27 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
             if (array_key_exists('valid', $this->templates[$currentFormat])) {
                 foreach ($this->templates[$currentFormat]['valid'] as $templateName => $template) {
                     foreach ($increments as $increment) {
-                            $this->resetFile('yml', $template, 'v42');
+                        $this->resetFile('yml', $template, 'v42');
 
-                            $manager = new AssetsVersionManager(
-                                    $this->fileName . '.' . $currentFormat,
-                                    $this->parameterName);
+                        $manager = new AssetsVersionManager(
+                                $this->fileDir . '/' . $this->fileName . '.'
+                                        . $currentFormat, $this->parameterName);
 
-                            try {
-                                $manager->incrementVersion($increment);
-                            } catch (\InvalidArgumentException $e) {
-                                continue;
-                            }
-                            $this
-                                    ->fail(
-                                            'InvalidArgumentException was expected when trying to increment a version by '
-                                                    . var_export($version, true));
+                        try {
+                            $manager->incrementVersion($increment);
+                        } catch (\InvalidArgumentException $e) {
+                            continue;
+                        }
+                        $this
+                                ->fail(
+                                        'InvalidArgumentException was expected when trying to increment a version by '
+                                                . var_export($version, true));
                     }
                 }
             }
         }
     }
-    
+
     public function testMalformedFiles()
     {
         foreach ($this->supportedFileFormats as $currentFormat) {
@@ -196,8 +205,8 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
 
                     try {
                         $manager = new AssetsVersionManager(
-                                $this->fileName . '.' . $currentFormat,
-                                $this->parameterName);
+                                $this->fileDir . '/' . $this->fileName . '.'
+                                        . $currentFormat, $this->parameterName);
                     } catch (\Exception $e) {
                         continue;
                     }
@@ -226,7 +235,9 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
             $fileContents = str_replace('%VERSION%', $version, $fileContents);
         }
 
-        file_put_contents($this->fileName . '.' . $fileFormat, $fileContents);
+        file_put_contents(
+                $this->fileDir . '/' . $this->fileName . '.' . $fileFormat,
+                $fileContents);
     }
 
     protected function loadTemplates()

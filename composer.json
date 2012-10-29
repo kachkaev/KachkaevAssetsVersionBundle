@@ -24,6 +24,7 @@
     },
 
     "require-dev": {
+        "symfony/filesystem": ">=2.1,<2.3-dev",
         "symfony/finder": ">=2.1,<2.3-dev"
     },
 
