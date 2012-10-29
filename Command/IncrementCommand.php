@@ -29,8 +29,7 @@ class IncrementCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-
-    	$output->writeln('Incrementing parameter <info>'.$this->getContainer()->getParameter('kachkaev_assets_version.parametername').'</info> in <info>'.basename($this->getContainer()->getParameter('kachkaev_assets_version.filename')).'</info>...');
+    	$output->writeln('Incrementing parameter <info>'.$this->getContainer()->getParameter('kachkaev_assets_version.parametername').'</info> in <info>'.basename($this->getContainer()->getParameter('kachkaev_assets_version.filename')).'</info> by <info>'.var_export($input->getArgument('delta'), true).'</info>...');
     	
     	$assetsVersionUpdater = $this->getContainer()->get('kachkaev_assets_version.assets_version_manager');
     	$assetsVersionUpdater->incrementVersion($input->getArgument('delta'));
