@@ -1,6 +1,8 @@
 KachkaevAssetsVersionBundle
 ===========================
 
+[![Build Status](https://secure.travis-ci.org/kachkaev/KachkaevAssetsVersionBundle.png)](http://travis-ci.org/kachkaev/KachkaevAssetsVersionBundle)
+
 Overview
 --------
 
