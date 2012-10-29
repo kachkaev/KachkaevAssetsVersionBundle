@@ -1,0 +1,264 @@
+<?php
+
+namespace Kachkaev\AssetsVersionBundle\Tests;
+
+use Kachkaev\AssetsVersionBundle\AssetsVersionManager;
+use Symfony\Component\Finder\Finder;
+
+class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
+{
+    protected $fileName = 'app/cache/test/parameters';//.yml, .xml ...
+    protected $parameterName = 'assets_version';
+
+    protected $templates;
+    protected $supportedFileFormats = array('yml');
+
+    public function __construct()
+    {
+        $this->loadTemplates();
+    }
+
+    public function __destruct()
+    {
+        // Deleting all temp files
+        foreach (array_keys($this->templates) as $extension)
+            @unlink($this->fileName . '.' . $extension);
+    }
+
+    public function testGetVersion()
+    {
+        foreach ($this->supportedFileFormats as $currentFormat) {
+            if (array_key_exists('valid', $this->templates[$currentFormat])) {
+                foreach ($this->templates[$currentFormat]['valid'] as $templateName => $template) {
+                    $this->resetFile('yml', $template, "some-version");
+
+                    $manager = new AssetsVersionManager(
+                            $this->fileName . '.' . $currentFormat,
+                            $this->parameterName);
+                    $this->assertEquals($manager->getVersion(), "some-version");
+                }
+            }
+        }
+    }
+
+    public function testSetVersion()
+    {
+        $versions = array('some-other-version', 1, 1234, '00001', 'v42', '');
+
+        foreach ($this->supportedFileFormats as $currentFormat) {
+            if (array_key_exists('valid', $this->templates[$currentFormat])) {
+                foreach ($this->templates[$currentFormat]['valid'] as $templateName => $template) {
+                    $this->resetFile('yml', $template, "some-version");
+
+                    $manager = new AssetsVersionManager(
+                            $this->fileName . '.' . $currentFormat,
+                            $this->parameterName);
+
+                    foreach ($versions as $version) {
+                        $manager->setVersion($version);
+                        $this->assertEquals($manager->getVersion(), $version);
+                    }
+                }
+            }
+        }
+    }
+
+    public function testSetInvalidVersion()
+    {
+        $versions = array(null, ' ', array(), '12345 ');
+
+        foreach ($this->supportedFileFormats as $currentFormat) {
+            if (array_key_exists('valid', $this->templates[$currentFormat])) {
+                foreach ($this->templates[$currentFormat]['valid'] as $templateName => $template) {
+                    $this->resetFile('yml', $template, "some-version");
+
+                    $manager = new AssetsVersionManager(
+                            $this->fileName . '.' . $currentFormat,
+                            $this->parameterName);
+
+                    foreach ($versions as $version) {
+                        try {
+                            $manager->setVersion($version);
+                            $this
+                                    ->assertEquals($manager->getVersion(),
+                                            $version);
+                        } catch (\InvalidArgumentException $e) {
+                            continue;
+                        }
+                        $this
+                                ->fail(
+                                        'InvalidArgumentException was expected for '
+                                                . var_export($version, true)
+                                                . ' as a new value for '
+                                                . $this->parameterName);
+                    }
+                }
+            }
+        }
+    }
+
+    public function testIncrementVersion()
+    {
+        $versions = array(
+                '42' => array("1" => '43', "10" => '52', "-100" => '0'),
+                'v42' => array("1" => 'v43', "10" => 'v52', "-100" => 'v0'),
+                '1.1' => array("1" => '1.2', "10" => '1.11', "-100" => '1.0'),
+                'v0042' => array("1" => 'v0043', "10" => 'v0052',
+                        "-100" => 'v0000'));
+
+        foreach ($this->supportedFileFormats as $currentFormat) {
+            if (array_key_exists('valid', $this->templates[$currentFormat])) {
+                foreach ($this->templates[$currentFormat]['valid'] as $templateName => $template) {
+                    foreach ($versions as $version => $increments) {
+                        foreach ($increments as $increment => $result) {
+                            $this->resetFile('yml', $template, $version);
+
+                            $manager = new AssetsVersionManager(
+                                    $this->fileName . '.' . $currentFormat,
+                                    $this->parameterName);
+
+                            $manager->incrementVersion($increment);
+                            $this
+                                    ->assertEquals($manager->getVersion(),
+                                            $result);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public function testIncrementVersionWithNoNumbers()
+    {
+        $versions = array('test', '42x');
+
+        foreach ($this->supportedFileFormats as $currentFormat) {
+            if (array_key_exists('valid', $this->templates[$currentFormat])) {
+                foreach ($this->templates[$currentFormat]['valid'] as $templateName => $template) {
+                    foreach ($versions as $version) {
+                            $this->resetFile('yml', $template, $version);
+
+                            $manager = new AssetsVersionManager(
+                                    $this->fileName . '.' . $currentFormat,
+                                    $this->parameterName);
+
+                            try {
+                                $manager->incrementVersion();
+                            } catch (\UnexpectedValueException $e) {
+                                continue;
+                            }
+                            $this
+                                    ->fail(
+                                            'UnexpectedValueException was expected for '
+                                                    . var_export($version, true)
+                                                    . ' when trying to increment it');
+                    }
+                }
+            }
+        }
+    }
+
+    public function testIncrementByWrongValue()
+    {
+        $increments = array('', null, array(), 'test');
+
+        foreach ($this->supportedFileFormats as $currentFormat) {
+            if (array_key_exists('valid', $this->templates[$currentFormat])) {
+                foreach ($this->templates[$currentFormat]['valid'] as $templateName => $template) {
+                    foreach ($increments as $increment) {
+                            $this->resetFile('yml', $template, 'v42');
+
+                            $manager = new AssetsVersionManager(
+                                    $this->fileName . '.' . $currentFormat,
+                                    $this->parameterName);
+
+                            try {
+                                $manager->incrementVersion($increment);
+                            } catch (\InvalidArgumentException $e) {
+                                continue;
+                            }
+                            $this
+                                    ->fail(
+                                            'InvalidArgumentException was expected when trying to increment a version by '
+                                                    . var_export($version, true));
+                    }
+                }
+            }
+        }
+    }
+    
+    public function testMalformedFiles()
+    {
+        foreach ($this->supportedFileFormats as $currentFormat) {
+            if (array_key_exists('invalid', $this->templates[$currentFormat])) {
+                foreach ($this->templates[$currentFormat]['invalid'] as $templateName => $template) {
+                    $this->resetFile('yml', $template);
+
+                    try {
+                        $manager = new AssetsVersionManager(
+                                $this->fileName . '.' . $currentFormat,
+                                $this->parameterName);
+                    } catch (\Exception $e) {
+                        continue;
+                    }
+                    $this
+                            ->fail(
+                                    'An exception was expected when readig a malformed file '
+                                            . $this->fileName . '.'
+                                            . $currentFormat);
+                }
+            }
+        }
+    }
+
+    public function testNonYamls()
+    {
+
+    }
+
+    protected function resetFile($fileFormat, $template, $version = null)
+    {
+        $fileContents = $template;
+
+        if (null === $version) {
+            $fileContents = str_replace('%VERSION%', 'null', $fileContents);
+        } else {
+            $fileContents = str_replace('%VERSION%', $version, $fileContents);
+        }
+
+        file_put_contents($this->fileName . '.' . $fileFormat, $fileContents);
+    }
+
+    protected function loadTemplates()
+    {
+        $this->templates = array();
+
+        $formatFinder = new Finder();
+        $formatFinder->directories()->in(__DIR__ . '/Resources/templates')
+                ->depth(0);
+
+        foreach ($formatFinder as $formatDir) {
+            $format = $formatDir->getFilename();
+            $this->templates[$format] = array();
+
+            $groupFinder = new Finder();
+            $groupFinder->directories()->in($formatDir->getPathname())
+                    ->depth(0);
+
+            foreach ($groupFinder as $groupDir) {
+                $group = $groupDir->getFilename();
+                $this->templates[$format][$group] = array();
+
+                $fileFinder = new Finder();
+                $fileFinder->files()->name('*.' . $format)
+                        ->in($groupDir->getPathname());
+
+                foreach ($fileFinder as $file) {
+                    $name = $file->getBasename('.' . $format);
+                    $this->templates[$format][$group][$name] = file_get_contents(
+                            $file->getPathname());
+                }
+            }
+        }
+    }
+}

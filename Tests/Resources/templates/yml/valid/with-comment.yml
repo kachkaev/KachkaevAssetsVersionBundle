@@ -1,0 +1,3 @@
+parameters:
+    assets_version: %VERSION% # a comment
+    something_else: null
