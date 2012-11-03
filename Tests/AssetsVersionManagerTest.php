@@ -108,6 +108,7 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
     public function testIncrementVersion()
     {
         $versions = array(
+                '18' => array("1" => '19', "10" => '28', "-100" => '0'),
                 '42' => array("1" => '43', "10" => '52', "-100" => '0'),
                 'v42' => array("1" => 'v43', "10" => 'v52', "-100" => 'v0'),
                 '1.1' => array("1" => '1.2', "10" => '1.11', "-100" => '1.0'),
