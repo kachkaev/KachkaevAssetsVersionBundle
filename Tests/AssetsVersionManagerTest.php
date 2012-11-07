@@ -38,7 +38,7 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
         foreach ($this->supportedFileFormats as $currentFormat) {
             if (array_key_exists('valid', $this->templates[$currentFormat])) {
                 foreach ($this->templates[$currentFormat]['valid'] as $templateName => $template) {
-                    $this->resetFile('yml', $template, "some-version");
+                    $this->setTempFileContents($currentFormat, $template, "some-version");
 
                     $manager = new AssetsVersionManager(
                             $this->fileDir . '/' . $this->fileName . '.'
@@ -56,14 +56,22 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
         foreach ($this->supportedFileFormats as $currentFormat) {
             if (array_key_exists('valid', $this->templates[$currentFormat])) {
                 foreach ($this->templates[$currentFormat]['valid'] as $templateName => $template) {
-                    $this->resetFile('yml', $template, "some-version");
+                    $this->setTempFileContents($currentFormat, $template, "some-version");
 
+                    $fileName = $this->fileDir . '/' . $this->fileName . '.'
+                                    . $currentFormat;
                     $manager = new AssetsVersionManager(
-                            $this->fileDir . '/' . $this->fileName . '.'
-                                    . $currentFormat, $this->parameterName);
+                            $fileName, $this->parameterName);
 
                     foreach ($versions as $version) {
+                        // Checking getter
                         $manager->setVersion($version);
+                        $this->assertEquals($manager->getVersion(), $version);
+                        
+                        // Checking real file contents
+                        $newTempFileContents = $this->getTempFileContents($currentFormat);
+                        $this->setTempFileContents($currentFormat, $template, $version);
+                        $this->assertEquals($newTempFileContents, $this->getTempFileContents($currentFormat));
                         $this->assertEquals($manager->getVersion(), $version);
                     }
                 }
@@ -78,7 +86,7 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
         foreach ($this->supportedFileFormats as $currentFormat) {
             if (array_key_exists('valid', $this->templates[$currentFormat])) {
                 foreach ($this->templates[$currentFormat]['valid'] as $templateName => $template) {
-                    $this->resetFile('yml', $template, "some-version");
+                    $this->setTempFileContents($currentFormat, $template, "some-version");
 
                     $manager = new AssetsVersionManager(
                             $this->fileDir . '/' . $this->fileName . '.'
@@ -120,7 +128,7 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
                 foreach ($this->templates[$currentFormat]['valid'] as $templateName => $template) {
                     foreach ($versions as $version => $increments) {
                         foreach ($increments as $increment => $result) {
-                            $this->resetFile('yml', $template, $version);
+                            $this->setTempFileContents($currentFormat, $template, $version);
 
                             $manager = new AssetsVersionManager(
                                     $this->fileDir . '/' . $this->fileName
@@ -146,7 +154,7 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
             if (array_key_exists('valid', $this->templates[$currentFormat])) {
                 foreach ($this->templates[$currentFormat]['valid'] as $templateName => $template) {
                     foreach ($versions as $version) {
-                        $this->resetFile('yml', $template, $version);
+                        $this->setTempFileContents($currentFormat, $template, $version);
 
                         $manager = new AssetsVersionManager(
                                 $this->fileDir . '/' . $this->fileName . '.'
@@ -176,7 +184,7 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
             if (array_key_exists('valid', $this->templates[$currentFormat])) {
                 foreach ($this->templates[$currentFormat]['valid'] as $templateName => $template) {
                     foreach ($increments as $increment) {
-                        $this->resetFile('yml', $template, 'v42');
+                        $this->setTempFileContents($currentFormat, $template, 'v42');
 
                         $manager = new AssetsVersionManager(
                                 $this->fileDir . '/' . $this->fileName . '.'
@@ -202,7 +210,7 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
         foreach ($this->supportedFileFormats as $currentFormat) {
             if (array_key_exists('invalid', $this->templates[$currentFormat])) {
                 foreach ($this->templates[$currentFormat]['invalid'] as $templateName => $template) {
-                    $this->resetFile('yml', $template);
+                    $this->setTempFileContents($currentFormat, $template);
 
                     try {
                         $manager = new AssetsVersionManager(
@@ -226,7 +234,12 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
 
     }
 
-    protected function resetFile($fileFormat, $template, $version = null)
+    protected function getFullPathToFile($fileFormat)
+    {
+        return $this->fileDir . '/' . $this->fileName . '.' . $fileFormat;
+    }
+    
+    protected function setTempFileContents($fileFormat, $template, $version = null)
     {
         $fileContents = $template;
 
@@ -237,10 +250,15 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
         }
 
         file_put_contents(
-                $this->fileDir . '/' . $this->fileName . '.' . $fileFormat,
+                $this->getFullPathToFile($fileFormat),
                 $fileContents);
     }
-
+    
+    protected function getTempFileContents($fileFormat)
+    {
+        return file_get_contents($this->getFullPathToFile($fileFormat));
+    }
+    
     protected function loadTemplates()
     {
         $this->templates = array();

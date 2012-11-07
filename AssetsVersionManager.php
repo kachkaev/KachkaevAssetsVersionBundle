@@ -162,7 +162,7 @@ class AssetsVersionManager
                 $this->fileContents . "\n", $matches);
         if (array_key_exists(2, $matches)) {
             $this->versionValue = $matches[2];
-            $this->versionStartPos = strpos($this->fileContents, $matches[0])
+            $this->versionStartPos = strpos($this->fileContents."\n", $matches[0])
                     + strlen($matches[1]);
             return;
         }
