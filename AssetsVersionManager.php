@@ -18,14 +18,19 @@ class AssetsVersionManager
 
     protected $fileName;
     protected $parameterName;
+    protected $parameterHashName;
 
     protected $fileContents;
     protected $versionValue;
+    protected $hashValue;
     protected $versionStartPos;
+    protected $hashStartPos;
+    protected $scannedFiles;
 
-    public function __construct($fileName, $parameterName)
+    public function __construct($fileName, $parameterName, $parameterHashName, $scannedfiles)
     {
         $this->fileName = $fileName;
+
 
         if (!preg_match('/^' . static::$versionParameterMask . '$/', $parameterName)) {
             throw new \InvalidArgumentException(
@@ -34,6 +39,8 @@ class AssetsVersionManager
                             . ' - it should consist only of characters, numbers and dash or underscore');
         }
         $this->parameterName = $parameterName;
+        $this->parameterHashName = $parameterHashName;
+        $this->scannedFiles = $scannedfiles;
 
         $this->readFile();
     }
@@ -60,6 +67,10 @@ class AssetsVersionManager
      */
     public function setVersion($value, $rereadFile = false)
     {
+
+        if ($rereadFile)
+            $this->readFile();
+
         // Checking value
         if (!is_string($value) && !is_numeric($value)) {
             throw new \InvalidArgumentException(
@@ -85,8 +96,57 @@ class AssetsVersionManager
             file_put_contents($this->fileName, $this->fileContents);
         } catch (\Exception $e) {
             throw new FileException(
-                    'Could not write write "' . $this->fileName
+                    'Could not write "' . $this->fileName
                             . '". Make sure it exists and you have enough permissions.');
+        }
+    }
+
+    /**
+     * Returns the list of checking files separated by comma.
+     *
+     * @return bool|string
+     */
+    public function getDefinedFilesList()
+    {
+        if (count($this->scannedFiles) == 0) {
+            return false;
+        } else {
+            return implode(", ", $this->scannedFiles);
+        }
+    }
+
+    /**
+     * Sets a new value for assets hash found in parameters file
+     *
+     * Assets hash must consist only of letters, numbers and the following characters: .-_
+     *
+     * @param boolean $rereadFile - if true, re-reads the file first
+     */
+    public function setHash($value, $rereadFile = false)
+    {
+        if ($rereadFile)
+            $this->readFile();
+
+        // Checking value
+        if (!is_string($value) && !is_numeric($value)) {
+            throw new \InvalidArgumentException(
+                'Wrong value for assets hash: '
+                    . var_export($value, true)
+                    . ' - it must be string or numeric.');
+        }
+
+        // Updating contents
+        $this->fileContents = substr_replace($this->fileContents, $value,
+            $this->hashStartPos, strlen($this->hashValue));
+        $this->hashValue = $value;
+
+        // Writing to file
+        try {
+            file_put_contents($this->fileName, $this->fileContents);
+        } catch (\Exception $e) {
+            throw new FileException(
+                'Could not write "' . $this->fileName
+                    . '". Make sure it exists and you have enough permissions.');
         }
     }
 
@@ -130,6 +190,29 @@ class AssetsVersionManager
     }
 
     /**
+     * Checks changes in the files. If there were changes then calculates md5-hash and sets the new value in parameters file.
+     *
+     * @return true if there changes were found, false - else.
+     */
+    public function updateHash()
+    {
+        $generalHash = "";
+        foreach($this->scannedFiles as $file) {
+            $generalHash .= md5_file($file);
+        }
+
+        $hash = md5($generalHash);
+        if ($this->hashValue != $hash) {
+            // Saving new hash value
+            $this->setHash($hash);
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * Reads and parses file with parameters
      * 
      * @throws InvalidConfigurationException
@@ -164,12 +247,28 @@ class AssetsVersionManager
             $this->versionValue = $matches[2];
             $this->versionStartPos = strpos($this->fileContents."\n", $matches[0])
                     + strlen($matches[1]);
-            return;
+            //return;
         }
 
+
+        // Finding a row with corresponding parameter
+        preg_match(
+            '/(\s+' . $this->parameterHashName . '\:[^\S\n]*)('
+                . static::$versionValueMask . ')\s*(\n|#)/',
+            $this->fileContents . "\n", $matches);
+        if (array_key_exists(2, $matches)) {
+
+            $this->hashValue = $matches[2];
+            $this->hashStartPos = strpos($this->fileContents."\n", $matches[0])
+                + strlen($matches[1]);
+            //return;
+        }
+
+
+/*
         throw new \Exception(
                 'Could not find definition of "' . $this->parameterName
                         . '". Make sure it exists in "' . $this->fileName
-                        . '".');
+                        . '".');*/
     }
 }

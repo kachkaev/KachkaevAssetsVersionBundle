@@ -24,6 +24,8 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('filename')->defaultNull()->end()
                 ->scalarNode('parametername')->defaultNull()->end()
                 ->scalarNode('manager')->defaultNull()->end()
+                ->scalarNode('parameterhashname')->defaultNull()->end()
+                ->arrayNode('scannedfiles')->isRequired()->prototype('scalar')->end()->end()
             ->end();
 
         return $treeBuilder;
