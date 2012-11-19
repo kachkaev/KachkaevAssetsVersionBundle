@@ -205,6 +205,7 @@ class AssetsVersionManager
         if ($this->hashValue != $hash) {
             // Saving new hash value
             $this->setHash($hash);
+            $this->incrementVersion();
 
             return true;
         } else {
