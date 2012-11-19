@@ -71,9 +71,12 @@ Here is the default configuration for the bundle:
 
 ```yml
 kachkaev_assets_version:
-    filename: %kernel.root_dir%/config/parameters.yml          # name of the file where application parameters are stored
-    parametername: assets_version                              # name of property that defines assets version in that file
-    manager: Kachkaev\AssetsVersionBundle\AssetsVersionManager # location of version manager
+    filename: %kernel.root_dir%/config/parameters.yml           # name of the file where application parameters are stored
+    parametername: assets_version                               # name of property that defines assets version in that file
+    manager: Kachkaev\AssetsVersionBundle\AssetsVersionManager  # location of version manager
+    scannedfiles:                                               # location list of files where required to search changes.
+                  #  - %kernel.root_dir%/../web/css/css.less    # example
+                  #  - %kernel.root_dir%/../web/css/second.less # example
 ```
 
 In most cases custom configuration is not needed, so simply add the following line to your ``app/config/config.yml``:
@@ -107,6 +110,9 @@ $ php app/console assets_version:increment -- -10
 
 # Decrementing version by a number bigger than current version results 0 (e.g. was v0010, became v0000)
 $ php app/console assets_version:increment -- -1000
+
+# Increments assets version by 1 if there were found changes in the files
+$ php app/console assets_version:update
 ```
 
 Value for assets version must consist only of letters, numbers and the following characters: ``.-_``. Incrementing only works when existing value is integer or has integer ending.
