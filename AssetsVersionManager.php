@@ -190,11 +190,11 @@ class AssetsVersionManager
     }
 
     /**
-     * Checks changes in the files. If there were changes then calculates md5-hash and sets the new value in parameters file.
+     * Checks changes in the files. If there were changes then calculates md5-hash, sets the new value in parameters file and increment version.
      *
      * @return true if there changes were found, false - else.
      */
-    public function updateHash()
+    public function updateVersion()
     {
         $generalHash = "";
         foreach($this->scannedFiles as $file) {
@@ -203,7 +203,7 @@ class AssetsVersionManager
 
         $hash = md5($generalHash);
         if ($this->hashValue != $hash) {
-            // Saving new hash value
+            // Saving new hash value and increment value.
             $this->setHash($hash);
             $this->incrementVersion();
 

@@ -32,10 +32,10 @@ class UpdateCommand extends ContainerAwareCommand
 
         $output->writeln('Checking updates in files: <info>' . $fileList . '</info>');
 
-        if ($assetsVersionUpdater->updateHash()) {
+        if ($assetsVersionUpdater->updateVersion()) {
             $output->writeln('Done. New value for <info>'.$this->getContainer()->getParameter('kachkaev_assets_version.parametername').'</info> is <info>'.$assetsVersionUpdater->getVersion().'</info>. Clearing of <info>prod</info> cache is required.');
         } else {
-            $output->writeln('There changes in the files were not found.');
+            $output->writeln('Any changes in the files were not found.');
         }
     }
 }
