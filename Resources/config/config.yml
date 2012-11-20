@@ -2,6 +2,8 @@ parameters:
     kachkaev_assets_version.filename: %kernel.root_dir%/config/parameters.yml
     kachkaev_assets_version.parametername: assets_version
     kachkaev_assets_version.manager.class: Kachkaev\AssetsVersionBundle\AssetsVersionManager
+    kachkaev_assets_version.parameterhashname: assets_hash
+    kachkaev_assets_version.scannedfiles: []
     
 services:
     kachkaev_assets_version.assets_version_manager:
@@ -9,3 +11,5 @@ services:
         arguments:
             - %kachkaev_assets_version.filename%
             - %kachkaev_assets_version.parametername%
+            - %kachkaev_assets_version.parameterhashname%
+            - %kachkaev_assets_version.scannedfiles%

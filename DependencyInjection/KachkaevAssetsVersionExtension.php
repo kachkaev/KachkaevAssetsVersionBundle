@@ -34,5 +34,11 @@ class KachkaevAssetsVersionExtension extends Extension
         if (null !== $config['manager']) {
             $container->setParameter('kachkaev_assets_version.manager.class', $config['manager']);
         }
+        if (null !== $config['scannedfiles']) {
+            $container->setParameter('kachkaev_assets_version.scannedfiles', $config['scannedfiles']);
+        }
+        if (null !== $config['parameterhashname']) {
+            $container->setParameter('kachkaev_assets_version.parameterhashname', $config['parameterhashname']);
+        }
     }
 }
