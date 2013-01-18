@@ -2,7 +2,7 @@
     "name": "kachkaev/assets-version-bundle",
     "type": "symfony-bundle",
     "description": "Automates the process of updating assets version in Symfony2 projects",
-    "keywords": ["assets", "assetic", "version", "autoincrement", "config", "console"],
+    "keywords": ["assets", "assetic", "version", "autoincrement", "config", "console", "deploy"],
     "homepage": "http://github.com/kachkaev/KachkaevAssetsVersionBundle",
     "license": "MIT",
 
