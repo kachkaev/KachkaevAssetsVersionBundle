@@ -123,3 +123,22 @@ php app/console assetic:dump --env=prod
 ```
 
 At the moment the bundle only works with yaml files, but more file types can be added if there is a demand.
+
+Capifony integration
+--------------------
+
+If you are using [Capifony](http://capifony.org) you can automate increment of `assets_version` during deployment using such code placed in `deploy.rb`:
+
+```ruby
+before "symfony:cache:warmup", "assets_version:increment", "symfony:cache:clear"
+
+namespace :assets_version do
+  task :increment do
+    capifony_pretty_print "--> Increase assets_version"
+
+    run "#{latest_release}/app/console assets_version:increment --env=#{symfony_env_prod}"
+
+    capifony_puts_ok
+  end
+end
+```
