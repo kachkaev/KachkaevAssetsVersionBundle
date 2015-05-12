@@ -9,8 +9,16 @@ So, if you configuration looks the following way:
 
 ```yml
 # app/config/config.yml
+
+## Symfony <=2.6
 framework:
     templating:      { engines: ['twig'], assets_version: %assets_version% }
+    # ...
+
+## Symfony >=2.7
+framework:
+    assets:
+        version: %assets_version%
     # ...
 ```
 
