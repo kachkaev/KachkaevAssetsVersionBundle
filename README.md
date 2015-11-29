@@ -36,10 +36,12 @@ parameters:
     # ...
 ```
 
-You simply call ``app/console assets_version:increment``, ``v042`` changes to ``v043`` and all your assets get a new URL: ``my_cosy_homepage.css?v042`` → ``my_cosy_homepage.css?v043``. It is important to clear ``prod`` cache after changing the assets version  – the bundle does not do this for you. More features are described below.
+You simply call ``app/console assets_version:increment``, ``v042`` changes to ``v043`` and all your assets get a new URL: ``my_cosy_homepage.css?v042`` → ``my_cosy_homepage.css?v043``. More features are described below.
 
-The reasons for versioning your project’s assets are listed in the Symfony docs:  
-http://symfony.com/doc/current/reference/configuration/framework.html#ref-framework-assets-version
+It is important to clear ``prod`` cache after updating the assets version for a change to take effect (just as with any other application parameter).
+
+Versioning your project’s assets is a common good practice. More on the ``assets_version`` parameter can be found in the Symfony docs:  
+http://symfony.com/doc/2.6/reference/configuration/framework.html#assets-version
 
 
 Installation
