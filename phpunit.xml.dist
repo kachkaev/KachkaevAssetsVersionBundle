@@ -23,4 +23,10 @@
             <group>performance</group>
         </exclude>
     </groups>
+
+    <filter>
+      <whitelist processUncoveredFilesFromWhitelist="true">
+        <file>AssetsVersionManager.php</file>
+      </whitelist>
+    </filter>
 </phpunit>
