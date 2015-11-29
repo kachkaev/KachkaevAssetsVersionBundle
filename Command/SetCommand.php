@@ -4,12 +4,9 @@ namespace Kachkaev\AssetsVersionBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
-use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Output\Output;
 
 class SetCommand extends ContainerAwareCommand
 {
@@ -29,11 +26,11 @@ class SetCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
 
-    	$output->writeln('Setting parameter <info>'.$this->getContainer()->getParameter('kachkaev_assets_version.parametername').'</info> in <info>'.basename($this->getContainer()->getParameter('kachkaev_assets_version.filename')).'</info> to <info>'.var_export($input->getArgument('value'), true).'</info>...');
-    	
-    	$assetsVersionUpdater = $this->getContainer()->get('kachkaev_assets_version.assets_version_manager');
-    	$assetsVersionUpdater->setVersion($input->getArgument('value'));
+        $output->writeln('Setting parameter <info>'.$this->getContainer()->getParameter('kachkaev_assets_version.parametername').'</info> in <info>'.basename($this->getContainer()->getParameter('kachkaev_assets_version.filename')).'</info> to <info>'.var_export($input->getArgument('value'), true).'</info>...');
 
-    	$output->writeln('Done. Clearing of <info>prod</info> cache is required.');
+        $assetsVersionUpdater = $this->getContainer()->get('kachkaev_assets_version.assets_version_manager');
+        $assetsVersionUpdater->setVersion($input->getArgument('value'));
+
+        $output->writeln('Done. Clearing of <info>prod</info> cache is required.');
     }
 }

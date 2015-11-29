@@ -11,7 +11,7 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
     protected $fileName = 'parameters';
     protected $parameterName = 'assets_version';
     protected $fileDir;
-    
+
     protected $fileSystem;
 
     protected $templates;
@@ -20,9 +20,9 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
     public function __construct()
     {
         $this->fileSystem = new Filesystem();
-        
+
         $this->fileDir = sys_get_temp_dir() . '/assets_version_test';
-        
+
         $this->fileSystem->mkdir($this->fileDir);
 
         $this->loadTemplates();
@@ -67,7 +67,7 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
                         // Checking getter
                         $manager->setVersion($version);
                         $this->assertEquals($manager->getVersion(), $version);
-                        
+
                         // Checking real file contents
                         $newTempFileContents = $this->getTempFileContents($currentFormat);
                         $this->setTempFileContents($currentFormat, $template, $version);
@@ -238,7 +238,7 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
     {
         return $this->fileDir . '/' . $this->fileName . '.' . $fileFormat;
     }
-    
+
     protected function setTempFileContents($fileFormat, $template, $version = null)
     {
         $fileContents = $template;
@@ -253,12 +253,12 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
                 $this->getFullPathToFile($fileFormat),
                 $fileContents);
     }
-    
+
     protected function getTempFileContents($fileFormat)
     {
         return file_get_contents($this->getFullPathToFile($fileFormat));
     }
-    
+
     protected function loadTemplates()
     {
         $this->templates = array();

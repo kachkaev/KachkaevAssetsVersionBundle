@@ -1,13 +1,13 @@
 <?php
 namespace Kachkaev\AssetsVersionBundle;
-use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 /**
  * Works with parameters.yml at a low level, extracts and writes back value of assets_version
  * Because parsing is done using regular expressions insead of YamlParser, formatting is preserved when writing value to file.
- * 
+ *
  * @author Alexander Kachkaev <alexander@kachkaev.ru>
  *
  */
@@ -40,7 +40,7 @@ class AssetsVersionManager
 
     /**
      * Gets the value of assets version found in parameters file
-     * 
+     *
      * @param boolean $rereadFile - if true, re-reads the file first
      */
     public function getVersion($rereadFile = false)
@@ -53,9 +53,9 @@ class AssetsVersionManager
 
     /**
      * Sets a new value for assets version found in parameters file
-     * 
+     *
      * Assets version must consist only of letters, numbers and the following characters: .-_
-     * 
+     *
      * @param boolean $rereadFile - if true, re-reads the file first
      */
     public function setVersion($value, $rereadFile = false)
@@ -94,7 +94,7 @@ class AssetsVersionManager
      * Increments value for assets version found in parameters file
      * Only works when current value is integer or has integer ending, e.g. v42
      * If delta is given, incrementing is done by that value.
-     * 
+     *
      * @param int $delta number to increment (default is 1)
      * @param boolean $rereadFile if true, re-reads the file first
      */
@@ -131,7 +131,7 @@ class AssetsVersionManager
 
     /**
      * Reads and parses file with parameters
-     * 
+     *
      * @throws InvalidConfigurationException
      * @throws FileException
      * @throws \Exception
