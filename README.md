@@ -104,7 +104,7 @@ If you are not using [AsseticBundle](https://symfony.com/doc/current/cookbook/as
  ```sh
 app/console assets_version:increment --env=prod
 app/console cache:clear --env=prod
-# app/console assetic:dump --env=prod          # (if you are using assetic)
+# app/console assetic:dump --env=prod          # if you are using assetic
 ```
 
 __Note:__ Replace ```app/console``` to ```bin/console``` if you are using Symfony3.
@@ -148,7 +148,7 @@ Since ```app/config/parameters.yml``` is listed in ```.gitignore```, ```assets_v
  app/console assets_version:increment
  app/console cache:clear --env=prod
  app/console assetic:dump --env=prod
- git commit
+ git commit                                  # if you are doing this from the terminal
  ```
 
  _On the production server(s):_
@@ -177,11 +177,11 @@ __Tip:__ Type less and do more by keeping common command sequences in shell scri
  # rm $PROJECT_DIR/web/compiled_assets/*
  $PROJECT_DIR/app/console assetic:dump --env=prod
  
- $cat PROJECT_DIR/app/config/assets_version.yml
+ cat $PROJECT_DIR/app/config/assets_version.yml
 ```
 
  ```sh
- # bin/update_from_repo
+ # bin/update_from_repo (to be used on the server)
  #!/bin/sh
 
  PROJECT_DIR=$( cd "$( dirname "$0" )" && pwd )/..
@@ -201,23 +201,23 @@ Usage examples:
 
 ```sh
 # Increments assets version by 1 (e.g. was v1, became v2; was 0042, became 0043 - leading letters and zeros are kept)
-$ app/console assets_version:increment
+app/console assets_version:increment
 
 # Increments assets version by 10 (e.g. was v1, became v11; was 0042, became 0052)
-$ app/console assets_version:increment 10
+app/console assets_version:increment 10
 
 # Sets version to "1970-01-01_0000"
-$ app/console assets_version:set 1970-01-01_0000
+app/console assets_version:set 1970-01-01_0000
 
 # Sets version to "abcDEF-something_else" (no numeric part, so assets_version:increment will stop working)
-$ app/console assets_version:set abcDEF-something_else
+app/console assets_version:set abcDEF-something_else
 
 # Decrements assets version by 10 (e.g. was 0052, became 0042; was lorem.ipsum.0.15, became lorem.ipsum.0.5)
 # Note two dashes before the argument that prevent symfony from parsing -1 as an option name
-$ app/console assets_version:increment -- -10
+app/console assets_version:increment -- -10
 
 # Decrementing version by a number bigger than current version results 0 (e.g. was v0010, became v0000)
-$ app/console assets_version:increment -- -1000
+app/console assets_version:increment -- -1000
 ```
 
 __Note:__ Replace ```app/console``` to ```bin/console``` if you are using Symfony3.
