@@ -6,11 +6,11 @@ KachkaevAssetsVersionBundle
 [![Total Downloads](https://poser.pugx.org/kachkaev/assets-version-bundle/downloads)](https://packagist.org/packages/kachkaev/assets-version-bundle)
 [![License](https://poser.pugx.org/kachkaev/assets-version-bundle/license)](https://packagist.org/packages/kachkaev/assets-version-bundle)
 
-Updating the assets version manually at each deploy is a real pain. The purpose of this Symfony2 & Symfony3 bundle is to automate this process and thus to make your life a bit happier.
+Updating the assets version manually at each deploy is a real pain. This Symfony2 & Symfony3 bundle automates the process and thus makes your life a bit happier.
 
-The bundle can read and write ``assets_version`` parameter in ``app/config/parameters.yml`` (or any other ``*.yml`` file) from the Symfony console. The original file formatting is carefully preserved, so you won’t lose the comments or empty lines between the groups of parameters, if there are any.
+The bundle can read and write ``assets_version`` parameter in ``app/config/parameters.yml`` (or any other ``*.yml`` file) from the Symfony console. The original file formatting is carefully preserved, so you won’t lose your comments or empty lines between the groups of parameters, if there are any.
 
-If the configuration of your project looks the following way:
+Imagine the configuration of your project looks the following way:
 
 ```yml
 # app/config/config.yml
@@ -36,7 +36,7 @@ parameters:
     # ...
 ```
 
-then you can simply call ``app/console assets_version:increment`` to change ``v042`` to ``v043``. It is important to clear ``prod`` cache afterwards as this is not done automatically. More features are described below.
+You simply call ``app/console assets_version:increment``, ``v042`` changes to ``v043`` and all your assets get a new URL: ``my_cosy_homepage.css?v042`` → ``my_cosy_homepage.css?v043``. It is important to clear ``prod`` cache after changing the assets version  – the bundle does not do this for you. More features are described below.
 
 The reasons for versioning your project’s assets are listed in the Symfony docs:  
 http://symfony.com/doc/current/reference/configuration/framework.html#ref-framework-assets-version
@@ -84,7 +84,7 @@ You don’t need to add anything to ```app/config/config.yml``` for it to apply.
 
 If you are not using [AsseticBundle](https://symfony.com/doc/current/cookbook/assetic/index.html) for compressing your css and js files or if you call ```assetic:dump``` on the production server, you normally don’t want the changes of ```assets_version``` to show up in your git repository. All you have to do then is the following:
 
-1. Modify your local copy of ```parameters.yml.dist```:
+1. Modify your local copyies of ```parameters.yml.dist``` and ```parameters.yml```:
 
  ```yml
  parameters:
@@ -109,8 +109,8 @@ __Note:__ Replace ```app/console``` to ```bin/console``` if you are using Symfon
 
 ### Option 2 (recommended): Assets versioning is under the source control
 
-If your app is running on multiple production servers or if you have a lot of css or js to compress with ```assetic:dump```, you will benefit from keeping compiled assets and their version in git reop.
-In this case it takes a bit more time to prepare for the deploy, but the rest happens nearly instantly.
+If your app is running on multiple production servers or if you have a lot of css and js to compress with ```assetic:dump```, you will benefit from keeping compiled assets and their version in the project’s git repo.
+It takes a bit more time to prepare for the deploy, but the rest happens nearly instantly.
 You won’t need UglifyCSS, UglifyJS or other assetic filters on your hosting and will be able to switch to any stable project version in a moment.
 A cheap server may struggle when compiling assets as this sometimes takes a lot of processor time, so you are saving yourself from that potential problem too.
 
@@ -127,10 +127,8 @@ Since ```app/config/parameters.yml``` is listed in ```.gitignore```, ```assets_v
  ```yml
  # app/config/config.yml
  imports:
-     - { resource: assets_version.yml } # <- new line
-     - { resource: parameters.yml }
-     - { resource: security.yml }
-     - { resource: services.yml }
+     - { resource: assets_version.yml }
+     # ...
  ```
  Do __not__ add ```app/config/assets_version.yml``` to ```.gitignore```!
 
@@ -174,8 +172,7 @@ __Tip:__ Type less and do more by keeping common command sequences in shell scri
  fi
 
  $PROJECT_DIR/app/console cache:clear --env=prod
- $rm PROJECT_DIR/$/all.css
- $rm PROJECT_DIR/$/all.js
+ # rm $PROJECT_DIR/web/compiled_assets/*
  $PROJECT_DIR/app/console assetic:dump --env=prod
  
  $cat PROJECT_DIR/app/config/assets_version.yml
@@ -197,7 +194,8 @@ __Tip:__ Type less and do more by keeping common command sequences in shell scri
 Console commands
 ----------------
 
-The bundle adds two commands to the symfony console: ``assets_version:increment`` and ``assets_version:set``. Usage examples: 
+The bundle adds two commands to the symfony console: ``assets_version:increment`` and ``assets_version:set``.  
+Usage examples: 
 
 ```sh
 # Increments assets version by 1 (e.g. was v1, became v2; was 0042, became 0043 - leading letters and zeros are kept)
