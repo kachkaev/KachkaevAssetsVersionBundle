@@ -109,12 +109,12 @@ __Note:__ Replace ```app/console``` to ```bin/console``` if you are using Symfon
 
 ### Option 2 (recommended): Assets versioning is under the source control
 
-If your app is running on multiple production servers or if you have a lot of css or js to compress with ```assetic:dump```, you will benefit from keeping compiled assets and their version under the git control.
+If your app is running on multiple production servers or if you have a lot of css or js to compress with ```assetic:dump```, you will benefit from keeping compiled assets and their version in git reop.
 In this case it takes a bit more time to prepare for the deploy, but the rest happens nearly instantly.
-You won’t have to install UglifyCSS, UglifyJS or other filters on the production and will be able to switch to any stable version in a second.
-Some cheap hostings struggle when compiling assets as this sometimes takes a lot of processor effort, so you are saving yourself from that potential problem too.
+You won’t need UglifyCSS, UglifyJS or other assetic filters on your hosting and will be able to switch to any stable project version in a moment.
+A cheap server may struggle when compiling assets as this sometimes takes a lot of processor time, so you are saving yourself from that potential problem too.
 
-Since ```app/config/parameters.yml``` is in ```.gitignore```, ```assets_version``` cannot be stored there.
+Since ```app/config/parameters.yml``` is listed in ```.gitignore```, ```assets_version``` should be stored somewhere else.
 
 1. Create ```app/config/assets_version.yml``` and link to it from ```app/config/config.yml```
 
@@ -141,7 +141,7 @@ Since ```app/config/parameters.yml``` is in ```.gitignore```, ```assets_version`
  kachkaev_assets_version:
      filename:  "%kernel.root_dir%/config/assets_version.yml"
   ```
-4. That’s it, you are ready to commit what you’ve got! Now each time you want to update the assets on the server, follow this routine:
+4. That’s it, you are ready to commit what you have! Now each time you want to update the assets on the server, follow this routine:
 
  _On the local machine:_
  ```sh
@@ -155,6 +155,8 @@ Since ```app/config/parameters.yml``` is in ```.gitignore```, ```assets_version`
  ```sh
  git pull
  ```
+
+Make sure that the compiled assets are not in ```.gitignore```!
 
 __Note:__ Replace ```app/console``` to ```bin/console``` if you are using Symfony3.
 
@@ -218,7 +220,9 @@ $ app/console assets_version:increment -- -10
 $ app/console assets_version:increment -- -1000
 ```
 
-Value for assets version must consist only of letters, numbers and the following characters: ``.-_``. Incrementing only works when the current parameter value is integer or has a numeric ending.
+__Note:__ Replace ```app/console``` to ```bin/console``` if you are using Symfony3.
+
+The value for assets version must consist only of letters, numbers and the following characters: ``.-_``. Incrementing only works when the current parameter value is integer or has a numeric ending.
 
 Please don’t forget to clear cache by calling ``app/console cache:clear --env=prod`` for changes to take effect in the production environment.
 
