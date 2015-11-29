@@ -6,24 +6,25 @@ KachkaevAssetsVersionBundle
 [![Total Downloads](https://poser.pugx.org/kachkaev/assets-version-bundle/downloads)](https://packagist.org/packages/kachkaev/assets-version-bundle)
 [![License](https://poser.pugx.org/kachkaev/assets-version-bundle/license)](https://packagist.org/packages/kachkaev/assets-version-bundle)
 
-Updating the assets version manually at each deploy is a real pain. The purpose of this Symfony2 / Symfony3 bundle is to automate this process and thus make your life a bit happier.
+Updating the assets version manually at each deploy is a real pain. The purpose of this Symfony2 & Symfony3 bundle is to automate this process and thus to make your life a bit happier.
 
 The bundle can read and write ``assets_version`` parameter in ``app/config/parameters.yml`` (or any other ``*.yml`` file) from the Symfony console. The original file formatting is carefully preserved, so you won’t lose the comments or empty lines between the groups of parameters, if there are any.
 
-If the project configuration looks the following way:
+If the configuration of your project looks the following way:
 
 ```yml
 # app/config/config.yml
 
 ## Symfony >=2.7, >=3.0
 framework:
-    assets:
-        version: %assets_version%
     # ...
+    assets:
+        version: "%assets_version%"
 
 ## Symfony <=2.6
 framework:
-    templating:      { engines: ['twig'], assets_version: %assets_version% }
+    # ...
+    templating:      { engines: ['twig'], assets_version: "%assets_version%" }
     # ...
 ```
 
@@ -37,8 +38,9 @@ parameters:
 
 then you can simply call ``php app/console assets_version:increment`` to change ``v42`` to ``v43``. It is important to clear ``prod`` cache afterwards as this is not done automatically. More features are described below.
 
-A detailed information on using assets versioning can be found in Symfony documentation:  
+The reasons for versioning your project’s assets are listed in the Symfony docs:  
 http://symfony.com/doc/current/reference/configuration/framework.html#ref-framework-assets-version
+
 
 Installation
 ------------
@@ -51,8 +53,12 @@ Register the bundle in ``app/AppKernel.php``
 $bundles = array(
     // ...
     new Kachkaev\AssetsVersionBundle\KachkaevAssetsVersionBundle(),
+    // ...
 );
 ```
+Not sure how to install 3<sup>rd</sup> party bundles? Symfony docs will help:  
+http://symfony.com/doc/current/cookbook/bundles/installation.html
+
 
 Configuration
 -------------
@@ -60,18 +66,46 @@ Configuration
 Here is the default configuration for the bundle:
 
 ```yml
-kachkaev_assets_version:
-    filename: %kernel.root_dir%/config/parameters.yml          # name of the file where application parameters are stored
-    parametername: assets_version                              # name of property that defines assets version in that file
-    manager: Kachkaev\AssetsVersionBundle\AssetsVersionManager # location of version manager
+assets_version:
+
+    # the name of the file that contains the assets version parameter
+    filename:             '%kernel.root_dir%/config/parameters.yml'
+
+    # the name of the parameter to work with
+    parametername:        assets_version
+
+    # the name of the class that reads and writes the assets version parameter
+    manager:              Kachkaev\AssetsVersionBundle\AssetsVersionManager
 ```
 
-In most cases custom configuration is not needed, so simply add the following line to your ``app/config/config.yml``:
+### Option 1 (simple): Assets versioning is done on the server
 
-```yml
-kachkaev_assets_version: ~
+If you are not using [AsseticBundle](https://symfony.com/doc/current/cookbook/assetic/index.html) for compressing your css and js files or if you call ```assetic:dump``` on the production server, you normally don’t want the changes of ```assets_version``` to show up in your git repository. All you have to do then is the following:
+
+1. Modify your local copy of ```parameters.yml.dist```:
+
+ ```yml
+parameters:
+    # ...
+    assets_version: v000
 ```
-__Note:__ It is not recommended to store real value of assets version in ``config.yml`` because its incrementing  will cause git conflicts. It is better to keep it in ``parameters.yml`` added to ``.gitignore`` and also have ``parameters.yml.dist`` with blank or initial value for assets version.
+
+2. Commit and push local changes (this will also include a new line in ```app/AppKernel.php``` and edits in ```composer.json``` and ```composer.lock```)
+
+3. Go to the server, ```git pull``` and ```composer install```. Since you have a new entry in ```parameters.yml.dist```, you will be asked to confirm that you want to copy ```assets_version: v000``` to ```app/config/parameters.yml```. Press enter.
+
+4. Each time you want to update the version of the assets, call these commands on the server:
+ ```sh
+php app/console assets_version:increment --env=prod
+php app/console cache:clear --env=prod
+# app/console assetic:dump --env=prod  # (if you are using assetic)
+```
+
+__Note:__ Change ```app/console``` to ```bin/console``` if you are using Symfony3.
+
+### Option 2 (recommended): Assets versioning is under the source control
+
+(TODO)
 
 Usage
 -----
