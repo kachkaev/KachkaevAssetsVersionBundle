@@ -13,7 +13,7 @@ class IncrementCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('assets_version:increment')
+            ->setName('assets-version:increment')
             ->setDescription('Increments assets version parameter')
             ->addArgument(
                     'delta',

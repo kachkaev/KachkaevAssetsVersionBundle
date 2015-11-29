@@ -36,7 +36,7 @@ parameters:
     # ...
 ```
 
-You simply call ``app/console assets_version:increment``, ``v042`` changes to ``v043`` and all your assets get a new URL: ``my_cosy_homepage.css?v042`` → ``my_cosy_homepage.css?v043``. More features are described below.
+You simply call ``app/console assets-version:increment``, ``v042`` changes to ``v043`` and all your assets get a new URL: ``my_cosy_homepage.css?v042`` → ``my_cosy_homepage.css?v043``. More features are described below.
 
 It is important to clear ``prod`` cache after updating the assets version for a change to take effect (just as with any other application parameter).
 
@@ -102,7 +102,7 @@ If you are not using [AsseticBundle](https://symfony.com/doc/current/cookbook/as
 
 5. All done! Now each time you want to update the version of the assets, call these commands on the server:
  ```sh
-app/console assets_version:increment --env=prod
+app/console assets-version:increment --env=prod
 app/console cache:clear --env=prod
 # app/console assetic:dump --env=prod          # if you are using assetic
 ```
@@ -145,7 +145,7 @@ Since ```app/config/parameters.yml``` is listed in ```.gitignore```, ```assets_v
 
  _On the local machine:_
  ```sh
- app/console assets_version:increment
+ app/console assets-version:increment
  app/console cache:clear --env=prod
  app/console assetic:dump --env=prod
  git commit                                  # if you are doing this from the terminal
@@ -170,7 +170,7 @@ __Tip:__ Type less and do more by keeping common command sequences in shell scri
 
  if [ "$1" = 'v' ];
  then
-	$PROJECT_DIR/app/console assets_version:increment --env=prod
+	$PROJECT_DIR/app/console assets-version:increment --env=prod
  fi
 
  $PROJECT_DIR/app/console cache:clear --env=prod
@@ -201,23 +201,23 @@ Usage examples:
 
 ```sh
 # Increments assets version by 1 (e.g. was v1, became v2; was 0042, became 0043 - leading letters and zeros are kept)
-app/console assets_version:increment
+app/console assets-version:increment
 
 # Increments assets version by 10 (e.g. was v1, became v11; was 0042, became 0052)
-app/console assets_version:increment 10
+app/console assets-version:increment 10
 
 # Sets version to "1970-01-01_0000"
-app/console assets_version:set 1970-01-01_0000
+app/console assets-version:set 1970-01-01_0000
 
 # Sets version to "abcDEF-something_else" (no numeric part, so assets_version:increment will stop working)
-app/console assets_version:set abcDEF-something_else
+app/console assets-version:set abcDEF-something_else
 
 # Decrements assets version by 10 (e.g. was 0052, became 0042; was lorem.ipsum.0.15, became lorem.ipsum.0.5)
 # Note two dashes before the argument that prevent symfony from parsing -1 as an option name
-app/console assets_version:increment -- -10
+app/console assets-version:increment -- -10
 
 # Decrementing version by a number bigger than current version results 0 (e.g. was v0010, became v0000)
-app/console assets_version:increment -- -1000
+app/console assets-version:increment -- -1000
 ```
 
 __Note:__ Replace ```app/console``` to ```bin/console``` if you are using Symfony3.
@@ -233,13 +233,13 @@ Capifony integration
 If you are using [Capifony](http://capifony.org) you can automate increment of `assets_version` during deployment using such code placed in `deploy.rb`:
 
 ```ruby
-before "symfony:cache:warmup", "assets_version:increment", "symfony:cache:clear"
+before "symfony:cache:warmup", "assets-version:increment", "symfony:cache:clear"
 
 namespace :assets_version do
   task :increment do
     capifony_pretty_print "--> Increase assets_version"
 
-    run "#{latest_release}/app/console assets_version:increment --env=#{symfony_env_prod}"
+    run "#{latest_release}/app/console assets-version:increment --env=#{symfony_env_prod}"
 
     capifony_puts_ok
   end

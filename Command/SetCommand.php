@@ -13,7 +13,7 @@ class SetCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('assets_version:set')
+            ->setName('assets-version:set')
             ->setDescription('Sets assets version parameter to a given value')
             ->addArgument(
                     'value',
