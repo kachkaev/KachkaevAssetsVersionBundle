@@ -1,75 +1,57 @@
 KachkaevAssetsVersionBundle
 ===========================
 
-The purpose of this Symfony2 bundle is to automate the process of updating assets version each time it needs to be changed − doing this manually is a real pain.
+[![Build Status](https://secure.travis-ci.org/kachkaev/KachkaevAssetsVersionBundle.png)](http://travis-ci.org/kachkaev/KachkaevAssetsVersionBundle)
+[![Latest Stable Version](https://poser.pugx.org/kachkaev/assets-version-bundle/v/stable)](https://packagist.org/packages/kachkaev/assets-version-bundle)
+[![Total Downloads](https://poser.pugx.org/kachkaev/assets-version-bundle/downloads)](https://packagist.org/packages/kachkaev/assets-version-bundle)
+[![License](https://poser.pugx.org/kachkaev/assets-version-bundle/license)](https://packagist.org/packages/kachkaev/assets-version-bundle)
 
-The bundle can read and write ``assets_version`` parameter in ``app/config/parameters.yml`` from Symfony console. One of the advantages of the bundle is that it does not break existing formatting in the yaml file, all user comments are also kept.
+Updating the assets version manually at each deploy is a real pain. The purpose of this Symfony2 / Symfony3 bundle is to automate this process and thus make your life a bit happier.
 
-So, if you configuration looks the following way:
+The bundle can read and write ``assets_version`` parameter in ``app/config/parameters.yml`` (or any other ``*.yml`` file) from the Symfony console. The original file formatting is carefully preserved, so you won’t lose the comments or empty lines between the groups of parameters, if there are any.
+
+If the project configuration looks the following way:
 
 ```yml
 # app/config/config.yml
 
-## Symfony <=2.6
-framework:
-    templating:      { engines: ['twig'], assets_version: %assets_version% }
-    # ...
-
-## Symfony >=2.7
+## Symfony >=2.7, >=3.0
 framework:
     assets:
         version: %assets_version%
+    # ...
+
+## Symfony <=2.6
+framework:
+    templating:      { engines: ['twig'], assets_version: %assets_version% }
     # ...
 ```
 
 ```yml
 # app/config/parameters.yml
 parameters:
+    # ...
     assets_version: v42
     # ...
 ```
 
-then you can simply call ``php app/console assets_version:increment`` to change version from ``v42`` to ``v43``. It is important to clear ``prod`` cache afterwards as this is not done automatically. More features are described below.
+then you can simply call ``php app/console assets_version:increment`` to change ``v42`` to ``v43``. It is important to clear ``prod`` cache afterwards as this is not done automatically. More features are described below.
 
-Detailed information on using assets versioning can be found in Symfony2 documentation: http://symfony.com/doc/current/reference/configuration/framework.html#ref-framework-assets-version
-
-[![Build Status](https://secure.travis-ci.org/kachkaev/KachkaevAssetsVersionBundle.png)](http://travis-ci.org/kachkaev/KachkaevAssetsVersionBundle)
+A detailed information on using assets versioning can be found in Symfony documentation:  
+http://symfony.com/doc/current/reference/configuration/framework.html#ref-framework-assets-version
 
 Installation
 ------------
 
-### Composer
+Run ```composer require kachkaev/assets-version-bundle```
 
-Add the following dependency to your project’s composer.json file:
-
-```js
-    "require": {
-        // ...
-        "kachkaev/assets-version-bundle": "dev-master"
-        // ...
-    }
-```
-Now tell composer to download the bundle by running the command:
-
-```bash
-$ php composer.phar update kachkaev/assets-version-bundle
-```
-
-Composer will install the bundle to `vendor/kachkaev` directory.
-
-### Adding bundle to your application kernel
+Register the bundle in ``app/AppKernel.php``
 
 ```php
-// app/AppKernel.php
-
-public function registerBundles()
-{
-    $bundles = array(
-        // ...
-        new Kachkaev\AssetsVersionBundle\KachkaevAssetsVersionBundle(),
-        // ...
-    );
-}
+$bundles = array(
+    // ...
+    new Kachkaev\AssetsVersionBundle\KachkaevAssetsVersionBundle(),
+);
 ```
 
 Configuration
