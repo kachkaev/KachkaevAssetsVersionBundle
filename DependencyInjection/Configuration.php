@@ -21,9 +21,18 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-                ->scalarNode('filename')->defaultNull()->end()
-                ->scalarNode('parametername')->defaultNull()->end()
-                ->scalarNode('manager')->defaultNull()->end()
+                ->scalarNode('filename')
+                    ->defaultValue('%kernel.root_dir%/config/parameters.yml')
+                    ->info('the name of the file that contains the assets version parameter')
+                    ->end()
+                ->scalarNode('parametername')
+                    ->defaultValue('assets_version')
+                    ->info('the name of the parameter to work with')
+                    ->end()
+                ->scalarNode('manager')
+                    ->info('the name of the class that manages the assets version')
+                    ->defaultValue('Kachkaev\AssetsVersionBundle\AssetsVersionManager')
+                    ->end()
             ->end();
 
         return $treeBuilder;
