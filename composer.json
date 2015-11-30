@@ -28,7 +28,8 @@
 	},
 	"require-dev" : {
 		"symfony/filesystem" : "~2.3|~3.0",
-		"symfony/finder" : "~2.3|~3.0"
+		"symfony/finder" : "~2.3|~3.0",
+		"satooshi/php-coveralls": "dev-master"
 	},
 	"suggest" : {
 		"symfony/assetic-bundle" : "For combining and compressing assets"
