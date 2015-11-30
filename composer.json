@@ -1,7 +1,7 @@
 {
 	"name" : "kachkaev/assets-version-bundle",
 	"type" : "symfony-bundle",
-	"description" : "Automates the process of updating assets version in Symfony2 projects",
+	"description" : "Automates the process of updating assets version in Symfony2 & Symfony3 projects",
 	"keywords" : [
 		"assets",
 		"assetic",
@@ -35,11 +35,10 @@
 		"symfony/assetic-bundle" : "For combining and compressing assets"
 	},
 	"autoload" : {
-		"psr-0" : {
-			"Kachkaev\\AssetsVersionBundle" : ""
-		}
+        "psr-4": {
+            "Kachkaev\\AssetsVersionBundle\\": "src/"
+        }
 	},
-	"target-dir" : "Kachkaev/AssetsVersionBundle",
 	"extra" : {
 		"branch-alias" : {
 			"dev-master" : "2.0-dev"
