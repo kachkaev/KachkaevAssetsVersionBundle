@@ -236,7 +236,7 @@ If you are using [Capifony](http://capifony.org) you can automate increment of `
 ```ruby
 before "symfony:cache:warmup", "assets-version:increment", "symfony:cache:clear"
 
-namespace :assets_version do
+namespace :assets-version do
   task :increment do
     capifony_pretty_print "--> Increase assets_version"
 
