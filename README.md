@@ -197,7 +197,7 @@ __Tip:__ Type less and do more by keeping common command sequences in shell scri
 Console commands
 ----------------
 
-The bundle adds two commands to the symfony console: ``assets_version:increment`` and ``assets_version:set``.  
+The bundle adds two commands to the symfony console: ``assets-version:increment`` and ``assets-version:set``.  
 Usage examples:
 
 ```sh
