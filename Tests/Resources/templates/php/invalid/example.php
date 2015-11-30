@@ -1,0 +1,1 @@
+$container->setParameter('assets_version', '%VERSION%');

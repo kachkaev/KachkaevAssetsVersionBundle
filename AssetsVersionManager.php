@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
  */
 class AssetsVersionManager
 {
-    static protected $versionParameterMask = '[a-zA-Z0-9_-]+';
+    static protected $versionParameterMask = '[a-zA-Z_][a-zA-Z0-9_-]*';
     static protected $versionValueMask = '[a-zA-Z0-9_\.-]*';
 
     protected $fileName;

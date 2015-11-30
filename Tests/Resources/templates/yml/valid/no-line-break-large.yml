@@ -2,7 +2,7 @@ parameters:
     database_driver:   pdo_mysql
     database_host:     localhost
     database_port:     ~
-    database_name:     wordpress
+    database_name:     dbname
     database_user:     root
     database_password: root
 
@@ -13,4 +13,4 @@ parameters:
 
     locale:            en
     secret:            ThisTokenIsNotSoSecretChangeIt
-    assets_version:    %VERSION%
+    <PARAMETER_NAME>: <PARAMETER_VALUE>

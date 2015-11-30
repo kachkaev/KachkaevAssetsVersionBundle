@@ -1,2 +1,2 @@
 parameters:
-    assets_version : %VERSION%
+    <PARAMETER_NAME> : <PARAMETER_VALUE>
