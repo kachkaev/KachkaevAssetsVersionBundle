@@ -26,7 +26,7 @@
 
     <filter>
       <whitelist processUncoveredFilesFromWhitelist="true">
-        <file>src/AssetsVersionManager.php</file>
+        <file>AssetsVersionManager.php</file>
       </whitelist>
     </filter>
 
