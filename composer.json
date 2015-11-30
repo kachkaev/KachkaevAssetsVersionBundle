@@ -31,6 +31,10 @@
 		"symfony/finder" : "~2.3|~3.0",
 		"satooshi/php-coveralls": "dev-master"
 	},
+    "scripts": {
+        "coveralls": "coveralls -v; exit 0",
+        "phpunit": "phpunit -c phpunit.xml.dist; exit 0"
+    },
 	"suggest" : {
 		"symfony/assetic-bundle" : "For combining and compressing assets"
 	},

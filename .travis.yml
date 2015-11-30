@@ -39,9 +39,11 @@ before_install:
 install:
     - composer update $COMPOSER_FLAGS
 
-script:
+before_script:
     - mkdir -p build/logs
-    - phpunit --coverage-clover build/logs/clover.xml
+
+script:
+    - composer phpunit
 
 after_script:
-  - php vendor/bin/coveralls
+    - composer coveralls

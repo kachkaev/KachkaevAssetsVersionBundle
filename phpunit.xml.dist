@@ -26,7 +26,13 @@
 
     <filter>
       <whitelist processUncoveredFilesFromWhitelist="true">
-        <file>AssetsVersionManager.php</file>
+        <file>src/AssetsVersionManager.php</file>
       </whitelist>
     </filter>
+
+    <logging>
+        <log type="coverage-clover" target="build/logs/clover.xml"/>
+        <log type="coverage-html" target="build/logs/html"/>
+    </logging>
+
 </phpunit>
