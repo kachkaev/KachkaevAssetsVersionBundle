@@ -16,16 +16,16 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-                ->scalarNode('filename')
+                ->scalarNode('file_path')
                     ->defaultValue('%kernel.root_dir%/config/parameters.yml')
-                    ->info('the name of the file that contains the assets version parameter')
+                    ->info('path to the file that contains the assets version parameter')
                     ->end()
-                ->scalarNode('parametername')
+                ->scalarNode('parameter_name')
                     ->defaultValue('assets_version')
-                    ->info('the name of the parameter to work with')
+                    ->info('name of the parameter to work with')
                     ->end()
                 ->scalarNode('manager')
-                    ->info('the name of the class that manages the assets version')
+                    ->info('name of the class that manages the assets version')
                     ->defaultValue('Kachkaev\AssetsVersionBundle\AssetsVersionManager')
                     ->end()
             ->end();

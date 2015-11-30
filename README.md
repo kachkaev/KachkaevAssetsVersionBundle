@@ -71,13 +71,13 @@ Here is the default configuration for the bundle:
 ```yml
 assets_version:
 
-    # the name of the file that contains the assets version parameter
-    filename:             '%kernel.root_dir%/config/parameters.yml'
+    # path to the file that contains the assets version parameter
+    file_path:             '%kernel.root_dir%/config/parameters.yml'
 
-    # the name of the parameter to work with
-    parametername:        assets_version
+    # name of the parameter to work with
+    parameter_name:        assets_version
 
-    # the name of the class that reads and writes the assets version parameter
+    # name of the class that reads and writes the assets version parameter
     manager:              Kachkaev\AssetsVersionBundle\AssetsVersionManager
 ```
 
@@ -140,7 +140,7 @@ Since ```app/config/parameters.yml``` is listed in ```.gitignore```, ```assets_v
 3. Add the following lines to ```app/config/config.yml```:
  ```yml
  kachkaev_assets_version:
-     filename:  "%kernel.root_dir%/config/assets_version.yml"
+     file_path:  "%kernel.root_dir%/config/assets_version.yml"
   ```
 4. That’s it, you are ready to commit what you have! Now each time you want to update the assets on the server, follow this routine:
 
@@ -177,7 +177,7 @@ __Tip:__ Type less and do more by keeping common command sequences in shell scri
  $PROJECT_DIR/app/console cache:clear --env=prod
  # rm $PROJECT_DIR/web/compiled_assets/*
  $PROJECT_DIR/app/console assetic:dump --env=prod
- 
+
  cat $PROJECT_DIR/app/config/assets_version.yml
 ```
 
@@ -198,7 +198,7 @@ Console commands
 ----------------
 
 The bundle adds two commands to the symfony console: ``assets_version:increment`` and ``assets_version:set``.  
-Usage examples: 
+Usage examples:
 
 ```sh
 # Increments assets version by 1 (e.g. was v1, became v2; was 0042, became 0043 - leading letters and zeros are kept)

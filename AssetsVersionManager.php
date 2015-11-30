@@ -16,16 +16,16 @@ class AssetsVersionManager
     static protected $versionParameterMask = '[a-zA-Z_][a-zA-Z0-9_-]*';
     static protected $versionValueMask = '[a-zA-Z0-9_\.-]*';
 
-    protected $fileName;
+    protected $filePath;
     protected $parameterName;
 
     protected $fileContents;
     protected $versionValue;
     protected $versionStartPos;
 
-    public function __construct($fileName, $parameterName)
+    public function __construct($filePath, $parameterName)
     {
-        $this->fileName = $fileName;
+        $this->filePath = $filePath;
 
         if (!preg_match('/^' . static::$versionParameterMask . '$/', $parameterName)) {
             throw new \InvalidArgumentException(sprintf(
@@ -82,11 +82,11 @@ class AssetsVersionManager
         $this->versionValue = $value;
 
         try {
-            file_put_contents($this->fileName, $this->fileContents);
+            file_put_contents($this->filePath, $this->fileContents);
         } catch (\Exception $e) {
             throw new FileException(sprintf(
                     'Could not write to write "%s"; make sure it exists and you have enough permissions',
-                    $this->fileName
+                    $this->filePath
                 ));
         }
     }
@@ -140,7 +140,7 @@ class AssetsVersionManager
     protected function readFile()
     {
 
-        $fileExtension = pathinfo($this->fileName, PATHINFO_EXTENSION);
+        $fileExtension = pathinfo($this->filePath, PATHINFO_EXTENSION);
         if ($fileExtension != 'yml' && $fileExtension != 'yaml')
             throw new InvalidConfigurationException(sprintf(
                     'Could not use "%s" - only yml files are supported by AssetsVersionManager',
@@ -148,11 +148,11 @@ class AssetsVersionManager
                 ));
 
         try {
-            $this->fileContents = file_get_contents($this->fileName);
+            $this->fileContents = file_get_contents($this->filePath);
         } catch (\Exception $e) {
             throw new FileException(sprintf(
                     'Could not read file "%s"; make sure it exists and you have enough permissions',
-                    $this->fileName
+                    $this->filePath
                 ));
         }
 
@@ -172,7 +172,7 @@ class AssetsVersionManager
         throw new \Exception(sprintf(
                 'Could not find definition of parameter "%s"; make sure it exists in "%s"',
                 $this->parameterName,
-                $this->fileName
+                $this->filePath
             ));
     }
 }
