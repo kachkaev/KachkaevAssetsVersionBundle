@@ -28,10 +28,10 @@ class AssetsVersionManager
         $this->fileName = $fileName;
 
         if (!preg_match('/^' . static::$versionParameterMask . '$/', $parameterName)) {
-            throw new \InvalidArgumentException(
-                    'Wrong value for parameter name '
-                            . var_export($parameterName, true)
-                            . ' - it should consist only of characters, numbers and dash or underscore');
+            throw new \InvalidArgumentException(sprintf(
+                    'Wrong value for parameter name %s - it should consist only of characters, numbers and dash or underscore',
+                    var_export($parameterName, true)
+                ));
         }
         $this->parameterName = $parameterName;
 
@@ -45,48 +45,49 @@ class AssetsVersionManager
      */
     public function getVersion($rereadFile = false)
     {
-        if ($rereadFile)
+        if ($rereadFile) {
             $this->readFile();
+        }
 
         return $this->versionValue;
     }
 
     /**
-     * Sets a new value for assets version found in parameters file
+     * Sets a new value for the assets version parameter
      *
      * Assets version must consist only of letters, numbers and the following characters: .-_
-     *
-     * @param boolean $rereadFile - if true, re-reads the file first
      */
-    public function setVersion($value, $rereadFile = false)
+    public function setVersion($value)
     {
-        // Checking value
         if (!is_string($value) && !is_numeric($value)) {
-            throw new \InvalidArgumentException(
-                    'Wrong value for assets version: '
-                            . var_export($value, true)
-                            . ' - it must be string or numeric.');
+            throw new \InvalidArgumentException(sprintf(
+                    'Wrong value for assets version: %s - it must be string or numeric',
+                    var_export($value, true)
+                ));
         }
 
         if (!preg_match('/^' . static::$versionValueMask . '$/', $value)) {
-            throw new \InvalidArgumentException(
-                    'Wrong value for assets version: '
-                            . var_export($value, true)
-                            . '. It must be empty or consist only of letters, numbers and the following characters: .-_');
+            throw new \InvalidArgumentException(sprintf(
+                    'Wrong value for assets version: %s - it must be empty or consist only of letters, numbers and the following characters: .-_',
+                    var_export($value, true)
+                ));
         }
 
-        // Updating contents
-        $this->fileContents = substr_replace($this->fileContents, $value,
-                $this->versionStartPos, strlen($this->versionValue));
+        $this->fileContents = substr_replace(
+                $this->fileContents,
+                $value,
+                $this->versionStartPos,
+                strlen($this->versionValue)
+            );
         $this->versionValue = $value;
 
-        // Writing to file
         try {
             file_put_contents($this->fileName, $this->fileContents);
         } catch (\Exception $e) {
-            throw new FileException(
-                    'Could not write write "' . $this->fileName
-                            . '". Make sure it exists and you have enough permissions.');
+            throw new FileException(sprintf(
+                    'Could not write to write "%s"; make sure it exists and you have enough permissions',
+                    $this->fileName
+                ));
         }
     }
 
@@ -100,32 +101,32 @@ class AssetsVersionManager
      */
     public function incrementVersion($delta = 1, $rereadFile = false)
     {
-        if ($rereadFile)
+        if ($rereadFile) {
             $this->readFile();
+        }
 
-        // Checking delta
-        if (!is_numeric($delta) || round($delta) != $delta)
-            throw new \InvalidArgumentException(
-                    'Delta must be integer, ' . var_export($delta, true) . ' given.');
+        if (!is_numeric($delta) || round($delta) != $delta) {
+            throw new \InvalidArgumentException(sprintf(
+                    'Delta must be integer, %s given',
+                    var_export($delta, true)
+                ));
+        }
 
-        // Parsing version value
         preg_match('/^(.*)(\d+)$/U', $this->versionValue, $matches);
         if (!array_key_exists(2, $matches)) {
-            throw new \UnexpectedValueException(
-                    'Could not increment assets version '
-                            . var_export($this->versionValue, true)
-                            . ' - it should be integer or at least have integer ending.');
+            throw new \UnexpectedValueException(sprintf(
+                    'Could not increment assets version %s - it should be integer or at least have integer ending',
+                    var_export($this->versionValue, true)
+                ));
         }
 
         $newValue = max(0, $matches[2] + $delta) . '';
 
-        // Preserving leading zeros
+        // Preserve leading zeros
         if ($matches[2][0] == '0') {
-            $newValue = str_pad($newValue, strlen($matches[2]), '0',
-                    STR_PAD_LEFT);
+            $newValue = str_pad($newValue, strlen($matches[2]), '0', STR_PAD_LEFT);
         }
 
-        // Saving new value
         $this->setVersion($matches[1] . $newValue);
     }
 
@@ -139,37 +140,39 @@ class AssetsVersionManager
     protected function readFile()
     {
 
-        // Checking if file extension is supported
         $fileExtension = pathinfo($this->fileName, PATHINFO_EXTENSION);
         if ($fileExtension != 'yml' && $fileExtension != 'yaml')
-            throw new InvalidConfigurationException(
-                    'Could not use "' . $this->fileName
-                            . '" - only yml files are supported by AssetsVersionManager');
+            throw new InvalidConfigurationException(sprintf(
+                    'Could not use "%s" - only yml files are supported by AssetsVersionManager',
+                    var_export($this->versionValue, true)
+                ));
 
-        // Reading file
         try {
             $this->fileContents = file_get_contents($this->fileName);
         } catch (\Exception $e) {
-            throw new FileException(
-                    'Could not read file "' . $this->fileName
-                            . '". Make sure it exists and you have enough permissions.');
+            throw new FileException(sprintf(
+                    'Could not read file "%s"; make sure it exists and you have enough permissions',
+                    $this->fileName
+                ));
         }
 
-        // Finding a row with corresponding parameter
+        // Find a row with the parameter
         preg_match(
-                '/(\s+' . $this->parameterName . '\:[^\S\n]*)('
-                        . static::$versionValueMask . ')\s*(\n|#)/',
-                $this->fileContents . "\n", $matches);
+                '/(\s+' . $this->parameterName . '\:[^\S\n]*)(' . static::$versionValueMask . ')\s*(\n|#)/',
+                $this->fileContents . "\n",
+                $matches
+            );
+
         if (array_key_exists(2, $matches)) {
             $this->versionValue = $matches[2];
-            $this->versionStartPos = strpos($this->fileContents."\n", $matches[0])
-                    + strlen($matches[1]);
+            $this->versionStartPos = strpos($this->fileContents."\n", $matches[0]) + strlen($matches[1]);
             return;
         }
 
-        throw new \Exception(
-                'Could not find definition of "' . $this->parameterName
-                        . '". Make sure it exists in "' . $this->fileName
-                        . '".');
+        throw new \Exception(sprintf(
+                'Could not find definition of parameter "%s"; make sure it exists in "%s"',
+                $this->parameterName,
+                $this->fileName
+            ));
     }
 }

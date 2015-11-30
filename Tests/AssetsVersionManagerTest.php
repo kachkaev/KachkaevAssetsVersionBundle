@@ -32,7 +32,12 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
         $this->loadTemplates();
     }
 
-    public function __destruct()
+    public function setUp()
+    {
+        $this->fileSystem->mkdir($this->fileDir);
+    }
+
+    public function tearDown()
     {
         $this->fileSystem->remove($this->fileDir);
     }
@@ -44,9 +49,9 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
                 foreach ($this->invalidParameterNames as $parameterName) {
                     $this->setTempFileContents($format, $template, $parameterName, 'some-version');
 
-                    $fileName = $this->fileDir . '/' . $this->fileName . '.' . $format;
+                    $filePath = $this->fileDir . '/' . $this->fileName . '.' . $format;
                     try {
-                        $manager = new AssetsVersionManager($fileName, $parameterName);
+                        $manager = new AssetsVersionManager($filePath, $parameterName);
                     } catch (\InvalidArgumentException $e) {
                         continue;
                     }
@@ -66,8 +71,8 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
                 foreach ($this->validParameterNames as $parameterName) {
                     $this->setTempFileContents($format, $template, $parameterName, 'some-version');
 
-                    $fileName = $this->fileDir . '/' . $this->fileName . '.' . $format;
-                    $manager = new AssetsVersionManager($fileName, $parameterName);
+                    $filePath = $this->fileDir . '/' . $this->fileName . '.' . $format;
+                    $manager = new AssetsVersionManager($filePath, $parameterName);
 
                     $this->assertEquals($manager->getVersion(), 'some-version');
                 }
@@ -84,11 +89,11 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
                 foreach ($this->validParameterNames as $parameterName) {
                     $this->setTempFileContents($format, $template, $parameterName, 'some-version');
 
-                    $fileName = $this->fileDir . '/' . $this->fileName . '.' . $format;
-                    $manager = new AssetsVersionManager($fileName, $parameterName);
+                    $filePath = $this->fileDir . '/' . $this->fileName . '.' . $format;
+                    $manager = new AssetsVersionManager($filePath, $parameterName);
 
                     foreach ($versions as $version) {
-                        // Checking getter
+                        // Checking setter
                         $manager->setVersion($version);
                         $this->assertEquals($manager->getVersion(), $version);
 
@@ -112,8 +117,8 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
                 foreach ($this->validParameterNames as $parameterName) {
                     $this->setTempFileContents($format, $template, $parameterName, 'some-version');
 
-                    $fileName = $this->fileDir . '/' . $this->fileName . '.' . $format;
-                    $manager = new AssetsVersionManager($fileName, $parameterName);
+                    $filePath = $this->fileDir . '/' . $this->fileName . '.' . $format;
+                    $manager = new AssetsVersionManager($filePath, $parameterName);
 
                     foreach ($versions as $version) {
                         try {
@@ -152,8 +157,8 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
                         foreach ($increments as $increment => $result) {
                             $this->setTempFileContents($format, $template, $parameterName, $version);
 
-                            $fileName = $this->fileDir . '/' . $this->fileName . '.' . $format;
-                            $manager = new AssetsVersionManager($fileName, $parameterName);
+                            $filePath = $this->fileDir . '/' . $this->fileName . '.' . $format;
+                            $manager = new AssetsVersionManager($filePath, $parameterName);
 
                             $manager->incrementVersion($increment);
                             $this->assertEquals($manager->getVersion(), $result);
@@ -174,8 +179,8 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
                     foreach ($versions as $version) {
                         $this->setTempFileContents($format, $template, $parameterName, $version);
 
-                        $fileName = $this->fileDir . '/' . $this->fileName . '.' . $format;
-                        $manager = new AssetsVersionManager($fileName, $parameterName);
+                        $filePath = $this->fileDir . '/' . $this->fileName . '.' . $format;
+                        $manager = new AssetsVersionManager($filePath, $parameterName);
 
                         try {
                             $manager->incrementVersion();
@@ -203,8 +208,8 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
                     foreach ($increments as $increment) {
                         $this->setTempFileContents($format, $template, $parameterName, 'v042');
 
-                        $fileName = $this->fileDir . '/' . $this->fileName . '.' . $format;
-                        $manager = new AssetsVersionManager($fileName, $parameterName);
+                        $filePath = $this->fileDir . '/' . $this->fileName . '.' . $format;
+                        $manager = new AssetsVersionManager($filePath, $parameterName);
 
                         try {
                             $manager->incrementVersion($increment);
@@ -228,9 +233,9 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
                 foreach ($this->validParameterNames as $parameterName) {
                     $this->setTempFileContents($format, $parameterName, $template);
 
-                    $fileName = $this->fileDir . '/' . $this->fileName . '.' . $format;
+                    $filePath = $this->fileDir . '/' . $this->fileName . '.' . $format;
                     try {
-                        $manager = new AssetsVersionManager($fileName, $parameterName);
+                        $manager = new AssetsVersionManager($filePath, $parameterName);
                     } catch (\Exception $e) {
                         continue;
                     }
@@ -251,9 +256,9 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
                 foreach ($this->validParameterNames as $parameterName) {
                     $this->setTempFileContents($format, $template, $parameterName, 'some-version');
 
-                    $fileName = $this->fileDir . '/' . $this->fileName . '.' . $format;
+                    $filePath = $this->fileDir . '/' . $this->fileName . '.' . $format;
                     try {
-                        $manager = new AssetsVersionManager($fileName, $parameterName);
+                        $manager = new AssetsVersionManager($filePath, $parameterName);
                      } catch (InvalidConfigurationException $e) {
                          continue;
                      }
@@ -267,23 +272,90 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-    public function testReadMissingFiles()
+    public function testRereadFileInGetVersion() {
+        foreach ($this->supportedFileFormats as $format) {
+            $templates = array_values($this->templates[$format]['valid']);
+            $template = $templates[0];
+            $parameterName = $this->validParameterNames[0];
+
+            $this->setTempFileContents($format, $template, $parameterName, 'some-version');
+
+            $filePath = $this->fileDir . '/' . $this->fileName . '.' . $format;
+            $manager = new AssetsVersionManager($filePath, $parameterName);
+
+            chmod($filePath, 000);
+
+            try {
+                $manager->getVersion(true);
+
+                chmod($filePath, 777);
+
+                $this->fail(sprintf(
+                        'FileException was expected when rereading an unavailable file %s',
+                        $filePath
+                    ));
+            } catch (FileException $e) {
+            }
+
+            $this->assertEquals($manager->getVersion(), 'some-version');
+
+            chmod($filePath, 777);
+
+            $this->assertEquals($manager->getVersion(true), 'some-version');
+
+            unlink($filePath);
+        }
+    }
+
+    public function testRereadFileInIncrementVersion() {
+        foreach ($this->supportedFileFormats as $format) {
+            $templates = array_values($this->templates[$format]['valid']);
+            $template = $templates[0];
+            $parameterName = $this->validParameterNames[0];
+
+            $this->setTempFileContents($format, $template, $parameterName, '42');
+
+            $filePath = $this->fileDir . '/' . $this->fileName . '.' . $format;
+            $manager = new AssetsVersionManager($filePath, $parameterName);
+
+            unlink($filePath);
+
+            try {
+                $manager->incrementVersion(1, true);
+
+                $this->fail(sprintf(
+                        'FileException was expected when rereading an unavailable file %s',
+                        $filePath
+                    ));
+            } catch (FileException $e) {
+            }
+
+            $this->setTempFileContents($format, $template, $parameterName, '42');
+            $manager->incrementVersion(1, true);
+
+            $this->assertEquals($manager->getVersion(), '43');
+
+            unlink($filePath);
+        }
+    }
+
+    public function testReadUnavailableFiles()
     {
         foreach ($this->supportedFileFormats as $format) {
-            $fileName = $this->fileDir . '/missing.' . $format;
+            $filePath = $this->fileDir . '/missing.' . $format;
             try {
-                $manager = new AssetsVersionManager($fileName, $this->validParameterNames[0]);
+                $manager = new AssetsVersionManager($filePath, $this->validParameterNames[0]);
             } catch (FileException $e) {
                 continue;
             }
             $this->fail(sprintf(
-                    'FileException was expected when readig a non-existing file %s',
-                    $fileName
+                    'FileException was expected when readig an unavailable file %s',
+                    $filePath
                 ));
         }
     }
 
-    public function testWriteMissingFiles()
+    public function testWriteUnavailableFiles()
     {
         foreach ($this->supportedFileFormats as $format) {
             $templates = array_values($this->templates[$format]['valid']);
@@ -292,22 +364,22 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
 
             $this->setTempFileContents($format, $template, $parameterName, 'some-version');
 
-            $fileName = $this->fileDir . '/' . $this->fileName . '.' . $format;
-            $manager = new AssetsVersionManager($fileName, $parameterName);
+            $filePath = $this->fileDir . '/' . $this->fileName . '.' . $format;
+            $manager = new AssetsVersionManager($filePath, $parameterName);
 
-            chmod($fileName, 000);
+            chmod($filePath, 000);
 
             try {
                 $manager->setVersion('some-other-value');
             } catch (FileException $e) {
-                chmod($fileName, 777);
+                chmod($filePath, 777);
                 continue;
             }
-            chmod($fileName, 777);
+            chmod($filePath, 777);
 
             $this->fail(sprintf(
-                    'FileException was expected when writing a deleted file %s',
-                    $fileName
+                    'FileException was expected when writing an unavialble file %s',
+                    $filePath
                 ));
         }
     }
