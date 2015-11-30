@@ -2,5 +2,5 @@ services:
     kachkaev_assets_version.assets_version_manager:
         class: "%kachkaev_assets_version.manager.class%"
         arguments:
-            - "%kachkaev_assets_version.filename%"
-            - "%kachkaev_assets_version.parametername%"
+            - "%kachkaev_assets_version.file_path%"
+            - "%kachkaev_assets_version.parameter_name%"
