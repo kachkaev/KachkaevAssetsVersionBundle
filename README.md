@@ -148,7 +148,7 @@ Since ```app/config/parameters.yml``` is listed in ```.gitignore```, ```assets_v
  app/console assets-version:increment
  app/console cache:clear --env=prod
  app/console assetic:dump --env=prod
- git commit                                  # if you are doing this from the terminal
+ git commit                                  # if you are doing this from a shell
  ```
 
  _On the production server(s):_
