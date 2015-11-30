@@ -26,7 +26,7 @@ class SetCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
 
-        $output->writeln('Setting parameter <info>'.$this->getContainer()->getParameter('kachkaev_assets_version.parametername').'</info> in <info>'.basename($this->getContainer()->getParameter('kachkaev_assets_version.filename')).'</info> to <info>'.var_export($input->getArgument('value'), true).'</info>...');
+        $output->writeln('Setting parameter <info>'.$this->getContainer()->getParameter('kachkaev_assets_version.parameter_name').'</info> in <info>'.basename($this->getContainer()->getParameter('kachkaev_assets_version.file_path')).'</info> to <info>'.var_export($input->getArgument('value'), true).'</info>...');
 
         $assetsVersionUpdater = $this->getContainer()->get('kachkaev_assets_version.assets_version_manager');
         $assetsVersionUpdater->setVersion($input->getArgument('value'));
