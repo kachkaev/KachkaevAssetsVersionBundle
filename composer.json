@@ -29,7 +29,7 @@
 	"require-dev" : {
 		"symfony/filesystem" : "~2.3|~3.0",
 		"symfony/finder" : "~2.3|~3.0",
-		"satooshi/php-coveralls": "dev-master"
+		"satooshi/php-coveralls": "~1.0"
 	},
     "scripts": {
         "coveralls": "coveralls -v; exit 0",
