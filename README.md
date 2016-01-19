@@ -143,7 +143,7 @@ Since ```app/config/parameters.yml``` is listed in ```.gitignore```, ```assets_v
   ```
 4. That’s it, you are ready to commit what you have! Now each time you want to update the assets on the server, follow this routine:  
     
- ``on the local machine``
+ _on the local machine_
  ```sh
  bin/console assets-version:increment
  bin/console cache:clear --env=prod
@@ -151,7 +151,7 @@ Since ```app/config/parameters.yml``` is listed in ```.gitignore```, ```assets_v
  git commit                                  # if you are doing this from a shell
  ```
  
- ``on the production server(s)``
+ _on the production server(s)_
  ```sh
  bin/console cache:clear --env=prod
  git pull
@@ -159,10 +159,10 @@ Since ```app/config/parameters.yml``` is listed in ```.gitignore```, ```assets_v
  
  Make sure that the compiled assets are not in ```.gitignore```!
 
-__Tip:__ Type less and do more by keeping common command sequences in shell scripts. Examples:
-
+__Tip:__ Type less and do more by keeping common command sequences in shell scripts. Examples:  
+   
+ ``bin/refresh_prod`` _(to be used on the local machine)_
  ```sh
- # bin/refresh_prod (to be used on the local machine)
  #!/bin/sh
 
  PROJECT_DIR=$( cd "$( dirname "$0" )" && pwd )/..
@@ -178,9 +178,8 @@ __Tip:__ Type less and do more by keeping common command sequences in shell scri
 
  cat $PROJECT_DIR/app/config/assets_version.yml
 ```
-
+ ``bin/update_from_repo`` _(to be used on the server)_
  ```sh
- # bin/update_from_repo (to be used on the server)
  #!/bin/sh
 
  PROJECT_DIR=$( cd "$( dirname "$0" )" && pwd )/..
