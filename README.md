@@ -29,8 +29,6 @@ framework:
     templating:      { engines: ['twig'], assets_version: "%assets_version%" }
     # ...
 ```
-
-   
 ``app/config/parameters.yml``
 ```yml
 parameters:
@@ -122,13 +120,13 @@ A cheap server may struggle when compiling assets as this sometimes takes a lot 
 Since ```app/config/parameters.yml``` is listed in ```.gitignore```, ```assets_version``` should be stored somewhere else.
 
 1. Create ```app/config/assets_version.yml``` and link to it from ```app/config/config.yml```  
-   
-``app/config/assets_version.yml``
+    
+ ``app/config/assets_version.yml``
  ```yml
  parameters:
      assets_version: v000
-```
-``app/config/config.yml``
+ ```
+ ``app/config/config.yml``
  ```yml
  imports:
      - { resource: assets_version.yml }
@@ -144,22 +142,22 @@ Since ```app/config/parameters.yml``` is listed in ```.gitignore```, ```assets_v
      file_path:  "%kernel.root_dir%/config/assets_version.yml"
   ```
 4. That’s it, you are ready to commit what you have! Now each time you want to update the assets on the server, follow this routine:  
-   
-``on the local machine``
+    
+ ``on the local machine``
  ```sh
  bin/console assets-version:increment
  bin/console cache:clear --env=prod
  bin/console assetic:dump --env=prod
  git commit                                  # if you are doing this from a shell
  ```
-
-    
-``on the production server(s)``
+ 
+ ``on the production server(s)``
  ```sh
  bin/console cache:clear --env=prod
  git pull
  ```
-Make sure that the compiled assets are not in ```.gitignore```!
+ 
+ Make sure that the compiled assets are not in ```.gitignore```!
 
 __Tip:__ Type less and do more by keeping common command sequences in shell scripts. Examples:
 
