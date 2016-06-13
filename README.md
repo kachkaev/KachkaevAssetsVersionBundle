@@ -229,7 +229,7 @@ Capifony integration
 If you are using [Capifony](http://capifony.org) you can automate increment of `assets_version` during deployment using such code placed in `deploy.rb`:
 
 ```ruby
-before "symfony:cache:warmup", "assets-version:increment", "symfony:cache:clear"
+before "symfony:cache:warmup", "assets_version:increment", "symfony:cache:clear"
 
 namespace :assets_version do
   task :increment do
