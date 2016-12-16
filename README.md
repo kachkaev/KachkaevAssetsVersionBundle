@@ -71,7 +71,7 @@ Configuration
 Here is the default configuration for the bundle:
 
 ```yml
-assets_version:
+kachkaev_assets_version:
 
     # path to the file that contains the assets version parameter
     file_path:             '%kernel.root_dir%/config/parameters.yml'
