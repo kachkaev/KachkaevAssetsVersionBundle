@@ -1,55 +1,58 @@
 <?php
 
 namespace Kachkaev\AssetsVersionBundle\Tests;
-use Symfony\Component\Filesystem\Filesystem;
 
+use Symfony\Component\Filesystem\Filesystem;
 use Kachkaev\AssetsVersionBundle\AssetsVersionManager;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
-class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
+class AssetsVersionManagerTest extends \PHPUnit\Framework\TestCase
 {
     protected $fileName = 'parameters';
     protected $validParameterNames = array('assets_version');
     protected $invalidParameterNames = array('assets_version ', '123');
-    protected $fileDir;
+    protected static $fileDir;
 
-    protected $fileSystem;
+    protected static $fileSystem;
 
-    protected $templates;
+    protected static $templates;
     protected $supportedFileFormats = array('yml');
     protected $unsupportedFileFormats = array('php', 'xml');
 
-    public function __construct()
+    public static function setUpBeforeClass()
     {
-        $this->fileSystem = new Filesystem();
+        self::$fileSystem = new Filesystem();
 
-        $this->fileDir = sys_get_temp_dir() . '/assets_version_test';
+        self::$fileDir = sys_get_temp_dir() . '/assets_version_test';
 
-        $this->fileSystem->mkdir($this->fileDir);
+        self::$fileSystem->mkdir(self::$fileDir);
 
-        $this->loadTemplates();
+        self::loadTemplates();
     }
 
     public function setUp()
     {
-        $this->fileSystem->mkdir($this->fileDir);
+        self::$fileSystem->mkdir(self::$fileDir);
     }
 
     public function tearDown()
     {
-        $this->fileSystem->remove($this->fileDir);
+        self::$fileSystem->remove(self::$fileDir);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testInvalidParameterNames()
     {
         foreach ($this->supportedFileFormats as $format) {
-            foreach ($this->templates[$format]['valid'] as $templateName => $template) {
+            foreach (self::$templates[$format]['valid'] as $templateName => $template) {
                 foreach ($this->invalidParameterNames as $parameterName) {
                     $this->setTempFileContents($format, $template, $parameterName, 'some-version');
 
-                    $filePath = $this->fileDir . '/' . $this->fileName . '.' . $format;
+                    $filePath = self::$fileDir . '/' . $this->fileName . '.' . $format;
                     try {
                         $manager = new AssetsVersionManager($filePath, $parameterName);
                     } catch (\InvalidArgumentException $e) {
@@ -67,11 +70,11 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
     public function testGetVersion()
     {
         foreach ($this->supportedFileFormats as $format) {
-            foreach ($this->templates[$format]['valid'] as $templateName => $template) {
+            foreach (self::$templates[$format]['valid'] as $templateName => $template) {
                 foreach ($this->validParameterNames as $parameterName) {
                     $this->setTempFileContents($format, $template, $parameterName, 'some-version');
 
-                    $filePath = $this->fileDir . '/' . $this->fileName . '.' . $format;
+                    $filePath = self::$fileDir . '/' . $this->fileName . '.' . $format;
                     $manager = new AssetsVersionManager($filePath, $parameterName);
 
                     $this->assertEquals($manager->getVersion(), 'some-version');
@@ -85,11 +88,11 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
         $versions = array('some-other-version', 1, 1234, '00001', 'v42', 'v042', '');
 
         foreach ($this->supportedFileFormats as $format) {
-            foreach ($this->templates[$format]['valid'] as $templateName => $template) {
+            foreach (self::$templates[$format]['valid'] as $templateName => $template) {
                 foreach ($this->validParameterNames as $parameterName) {
                     $this->setTempFileContents($format, $template, $parameterName, 'some-version');
 
-                    $filePath = $this->fileDir . '/' . $this->fileName . '.' . $format;
+                    $filePath = self::$fileDir . '/' . $this->fileName . '.' . $format;
                     $manager = new AssetsVersionManager($filePath, $parameterName);
 
                     foreach ($versions as $version) {
@@ -108,16 +111,19 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
         }
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testSetInvalidVersion()
     {
         $versions = array(null, ' ', array(), '12345 ');
 
         foreach ($this->supportedFileFormats as $format) {
-            foreach ($this->templates[$format]['valid'] as $templateName => $template) {
+            foreach (self::$templates[$format]['valid'] as $templateName => $template) {
                 foreach ($this->validParameterNames as $parameterName) {
                     $this->setTempFileContents($format, $template, $parameterName, 'some-version');
 
-                    $filePath = $this->fileDir . '/' . $this->fileName . '.' . $format;
+                    $filePath = self::$fileDir . '/' . $this->fileName . '.' . $format;
                     $manager = new AssetsVersionManager($filePath, $parameterName);
 
                     foreach ($versions as $version) {
@@ -151,13 +157,13 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
             );
 
         foreach ($this->supportedFileFormats as $format) {
-            foreach ($this->templates[$format]['valid'] as $templateName => $template) {
+            foreach (self::$templates[$format]['valid'] as $templateName => $template) {
                 foreach ($this->validParameterNames as $parameterName) {
                     foreach ($versions as $version => $increments) {
                         foreach ($increments as $increment => $result) {
                             $this->setTempFileContents($format, $template, $parameterName, $version);
 
-                            $filePath = $this->fileDir . '/' . $this->fileName . '.' . $format;
+                            $filePath = self::$fileDir . '/' . $this->fileName . '.' . $format;
                             $manager = new AssetsVersionManager($filePath, $parameterName);
 
                             $manager->incrementVersion($increment);
@@ -169,17 +175,20 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
         }
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testIncrementVersionWithNoNumbers()
     {
         $versions = array('test', '42x');
 
         foreach ($this->supportedFileFormats as $format) {
-            foreach ($this->templates[$format]['valid'] as $templateName => $template) {
+            foreach (self::$templates[$format]['valid'] as $templateName => $template) {
                 foreach ($this->validParameterNames as $parameterName) {
                     foreach ($versions as $version) {
                         $this->setTempFileContents($format, $template, $parameterName, $version);
 
-                        $filePath = $this->fileDir . '/' . $this->fileName . '.' . $format;
+                        $filePath = self::$fileDir . '/' . $this->fileName . '.' . $format;
                         $manager = new AssetsVersionManager($filePath, $parameterName);
 
                         try {
@@ -198,17 +207,20 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
         }
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testIncrementByWrongValue()
     {
         $increments = array('', null, array(), 'test');
 
         foreach ($this->supportedFileFormats as $format) {
-            foreach ($this->templates[$format]['valid'] as $templateName => $template) {
+            foreach (self::$templates[$format]['valid'] as $templateName => $template) {
                 foreach ($this->validParameterNames as $parameterName) {
                     foreach ($increments as $increment) {
                         $this->setTempFileContents($format, $template, $parameterName, 'v042');
 
-                        $filePath = $this->fileDir . '/' . $this->fileName . '.' . $format;
+                        $filePath = self::$fileDir . '/' . $this->fileName . '.' . $format;
                         $manager = new AssetsVersionManager($filePath, $parameterName);
 
                         try {
@@ -226,14 +238,17 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
         }
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testMalformedFiles()
     {
         foreach ($this->supportedFileFormats as $format) {
-            foreach ($this->templates[$format]['invalid'] as $templateName => $template) {
+            foreach (self::$templates[$format]['invalid'] as $templateName => $template) {
                 foreach ($this->validParameterNames as $parameterName) {
                     $this->setTempFileContents($format, $parameterName, $template);
 
-                    $filePath = $this->fileDir . '/' . $this->fileName . '.' . $format;
+                    $filePath = self::$fileDir . '/' . $this->fileName . '.' . $format;
                     try {
                         $manager = new AssetsVersionManager($filePath, $parameterName);
                     } catch (\Exception $e) {
@@ -249,14 +264,17 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
         }
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testNonYamls()
     {
         foreach ($this->unsupportedFileFormats as $format) {
-            foreach ($this->templates[$format]['invalid'] as $templateName => $template) {
+            foreach (self::$templates[$format]['invalid'] as $templateName => $template) {
                 foreach ($this->validParameterNames as $parameterName) {
                     $this->setTempFileContents($format, $template, $parameterName, 'some-version');
 
-                    $filePath = $this->fileDir . '/' . $this->fileName . '.' . $format;
+                    $filePath = self::$fileDir . '/' . $this->fileName . '.' . $format;
                     try {
                         $manager = new AssetsVersionManager($filePath, $parameterName);
                      } catch (InvalidConfigurationException $e) {
@@ -274,13 +292,13 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testRereadFileInGetVersion() {
         foreach ($this->supportedFileFormats as $format) {
-            $templates = array_values($this->templates[$format]['valid']);
+            $templates = array_values(self::$templates[$format]['valid']);
             $template = $templates[0];
             $parameterName = $this->validParameterNames[0];
 
             $this->setTempFileContents($format, $template, $parameterName, 'some-version');
 
-            $filePath = $this->fileDir . '/' . $this->fileName . '.' . $format;
+            $filePath = self::$fileDir . '/' . $this->fileName . '.' . $format;
             $manager = new AssetsVersionManager($filePath, $parameterName);
 
             chmod($filePath, 000);
@@ -309,13 +327,13 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testRereadFileInIncrementVersion() {
         foreach ($this->supportedFileFormats as $format) {
-            $templates = array_values($this->templates[$format]['valid']);
+            $templates = array_values(self::$templates[$format]['valid']);
             $template = $templates[0];
             $parameterName = $this->validParameterNames[0];
 
             $this->setTempFileContents($format, $template, $parameterName, '42');
 
-            $filePath = $this->fileDir . '/' . $this->fileName . '.' . $format;
+            $filePath = self::$fileDir . '/' . $this->fileName . '.' . $format;
             $manager = new AssetsVersionManager($filePath, $parameterName);
 
             unlink($filePath);
@@ -339,10 +357,13 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
         }
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testReadUnavailableFiles()
     {
         foreach ($this->supportedFileFormats as $format) {
-            $filePath = $this->fileDir . '/missing.' . $format;
+            $filePath = self::$fileDir . '/missing.' . $format;
             try {
                 $manager = new AssetsVersionManager($filePath, $this->validParameterNames[0]);
             } catch (FileException $e) {
@@ -355,16 +376,19 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
         }
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testWriteUnavailableFiles()
     {
         foreach ($this->supportedFileFormats as $format) {
-            $templates = array_values($this->templates[$format]['valid']);
+            $templates = array_values(self::$templates[$format]['valid']);
             $template = $templates[0];
             $parameterName = $this->validParameterNames[0];
 
             $this->setTempFileContents($format, $template, $parameterName, 'some-version');
 
-            $filePath = $this->fileDir . '/' . $this->fileName . '.' . $format;
+            $filePath = self::$fileDir . '/' . $this->fileName . '.' . $format;
             $manager = new AssetsVersionManager($filePath, $parameterName);
 
             chmod($filePath, 000);
@@ -386,7 +410,7 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
 
     protected function getFullPathToFile($fileFormat)
     {
-        return $this->fileDir . '/' . $this->fileName . '.' . $fileFormat;
+        return self::$fileDir . '/' . $this->fileName . '.' . $fileFormat;
     }
 
     protected function setTempFileContents($fileFormat, $template, $parameterName, $parameterValue = null)
@@ -411,9 +435,9 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
         return file_get_contents($this->getFullPathToFile($fileFormat));
     }
 
-    protected function loadTemplates()
+    protected static function loadTemplates()
     {
-        $this->templates = array();
+        self::$templates = array();
 
         $formatFinder = new Finder();
         $formatFinder
@@ -423,7 +447,7 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
 
         foreach ($formatFinder as $formatDir) {
             $format = $formatDir->getFilename();
-            $this->templates[$format] = array();
+            self::$templates[$format] = array();
 
             $groupFinder = new Finder();
             $groupFinder
@@ -433,7 +457,7 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
 
             foreach ($groupFinder as $groupDir) {
                 $group = $groupDir->getFilename();
-                $this->templates[$format][$group] = array();
+                self::$templates[$format][$group] = array();
 
                 $fileFinder = new Finder();
                 $fileFinder
@@ -443,7 +467,7 @@ class AssetsVersionManagerTest extends \PHPUnit_Framework_TestCase
 
                 foreach ($fileFinder as $file) {
                     $name = $file->getBasename('.' . $format);
-                    $this->templates[$format][$group][$name] = file_get_contents($file->getPathname());
+                    self::$templates[$format][$group][$name] = file_get_contents($file->getPathname());
                 }
             }
         }

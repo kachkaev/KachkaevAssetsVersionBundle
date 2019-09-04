@@ -1,5 +1,3 @@
-sudo: false
-
 language: php
 
 cache:
@@ -7,26 +5,29 @@ cache:
         - $HOME/.composer/cache/files
 
 php:
-  - 5.3
-  - 5.4
-  - 5.5
+  - 5.6
   - 7.0
-  - hhvm
+  - 7.1
+  - 7.2
+  - 7.3
 
 matrix:
   fast_finish: true
   include:
-    - php: 5.3
+    - php: 5.5
+      dist: trusty
       env: COMPOSER_FLAGS="--prefer-lowest" SYMFONY_DEPRECATIONS_HELPER=weak
     # Test against Symfony LTS versions
-    - php: 5.6
+    - php: 7.3
       env: SYMFONY_VERSION="2.3.*"
-    - php: 5.6
+    - php: 7.3
       env: SYMFONY_VERSION="2.7.*"
-    - php: 5.6
+    - php: 7.3
       env: SYMFONY_VERSION="2.8.*" DEPENDENCIES=dev
+    - php: 7.3
+      env: SYMFONY_VERSION="3.4.*"
     # Test against dev versions
-    - php: 5.6
+    - php: 7.3
       env: DEPENDENCIES=dev
   allow_failures:
     - env: DEPENDENCIES=dev
@@ -37,7 +38,7 @@ before_install:
     - if [ "$SYMFONY_VERSION" != "" ]; then composer require --dev --no-update symfony/symfony:"$SYMFONY_VERSION"; fi
 
 install:
-    - composer update $COMPOSER_FLAGS
+    - COMPOSER_MEMORY_LIMIT=-1 travis_retry composer update $COMPOSER_FLAGS
 
 before_script:
     - mkdir -p build/logs
