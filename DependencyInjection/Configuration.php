@@ -11,10 +11,10 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('assets_version');
+        $treeBuilder = new TreeBuilder('assets_version');
 
-        $rootNode
+        $treeBuilder
+            ->getRootNode()
             ->children()
                 ->scalarNode('file_path')
                     ->defaultValue('%kernel.root_dir%/config/parameters.yml')
