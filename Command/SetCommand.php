@@ -10,9 +10,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class SetCommand extends Command
 {
-    private $assetsVersionManager;
-    private $parameterName;
-    private $filePath;
+    private AssetsVersionManager $assetsVersionManager;
+    private string $parameterName;
+    private string $filePath;
 
     /**
      * SetCommand constructor.
@@ -29,7 +29,7 @@ class SetCommand extends Command
         $this->filePath = $filePath;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setDescription('Sets assets version parameter to a given value')
@@ -41,7 +41,7 @@ class SetCommand extends Command
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): void
     {
 
         $output->writeln('Setting parameter <info>'.$this->parameterName.'</info> in <info>'.basename($this->filePath).'</info> to <info>'.var_export($input->getArgument('value'), true).'</info>...');

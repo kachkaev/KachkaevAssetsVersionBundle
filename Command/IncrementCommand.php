@@ -10,9 +10,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class IncrementCommand extends Command
 {
-    private $assetsVersionManager;
-    private $parameterName;
-    private $filePath;
+    private AssetsVersionManager $assetsVersionManager;
+    private string $parameterName;
+    private string $filePath;
 
     /**
      * IncrementCommand constructor.
@@ -29,7 +29,7 @@ class IncrementCommand extends Command
         $this->filePath = $filePath;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setDescription('Increments assets version parameter')

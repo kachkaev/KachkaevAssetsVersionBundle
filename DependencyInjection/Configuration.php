@@ -9,7 +9,7 @@ class Configuration implements ConfigurationInterface
     /**
      * {@inheritDoc}
      */
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('assets_version');
 
@@ -17,7 +17,7 @@ class Configuration implements ConfigurationInterface
             ->getRootNode()
             ->children()
                 ->scalarNode('file_path')
-                    ->defaultValue('%kernel.root_dir%/config/parameters.yml')
+                    ->defaultValue('%kernel.project_dir%/../config/parameters.yml')
                     ->info('path to the file that contains the assets version parameter')
                     ->end()
                 ->scalarNode('parameter_name')
