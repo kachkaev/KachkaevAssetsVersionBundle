@@ -17,7 +17,7 @@ class Configuration implements ConfigurationInterface
             ->getRootNode()
             ->children()
                 ->scalarNode('file_path')
-                    ->defaultValue('%kernel.project_dir%/../config/parameters.yml')
+                    ->defaultValue('%kernel.project_dir%/app/config/parameters.yml')
                     ->info('path to the file that contains the assets version parameter')
                     ->end()
                 ->scalarNode('parameter_name')
