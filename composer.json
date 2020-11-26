@@ -1,7 +1,7 @@
 {
 	"name" : "grizzlylab/assets-version-bundle",
 	"type" : "symfony-bundle",
-	"description" : "Automates the process of updating assets version in Symfony 4/5 projects",
+	"description" : "Automates the process of updating assets version in Symfony 5 projects still using parameters.yml",
 	"keywords" : [
 		"assets",
 		"assetic",
@@ -30,11 +30,11 @@
 	],
 	"require" : {
 		"php" : "^7.4",
-		"symfony/framework-bundle" : "^4.4|^5.1"
+		"symfony/framework-bundle" : "^5.1"
 	},
 	"require-dev" : {
-		"symfony/filesystem" : "^4.4|^5.1",
-		"symfony/finder" : "^4.4|^5.1",
+		"symfony/filesystem" : "^5.1",
+		"symfony/finder" : "^5.1",
 		"phpunit/phpunit": "~9.4"
 	},
     "scripts": {

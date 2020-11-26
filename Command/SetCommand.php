@@ -41,7 +41,7 @@ class SetCommand extends Command
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
 
         $output->writeln('Setting parameter <info>'.$this->parameterName.'</info> in <info>'.basename($this->filePath).'</info> to <info>'.var_export($input->getArgument('value'), true).'</info>...');
@@ -50,5 +50,7 @@ class SetCommand extends Command
         $assetsVersionUpdater->setVersion($input->getArgument('value'));
 
         $output->writeln('Done. Clearing of <info>prod</info> cache is required.');
+
+        return self::SUCCESS;
     }
 }

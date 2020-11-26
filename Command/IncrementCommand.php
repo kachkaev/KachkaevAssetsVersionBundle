@@ -42,7 +42,7 @@ class IncrementCommand extends Command
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
         $output->writeln('Incrementing parameter <info>'.$this->parameterName.'</info> in <info>'.basename($this->filePath).'</info> by <info>'.var_export($input->getArgument('delta'), true).'</info>...');
 
@@ -50,5 +50,7 @@ class IncrementCommand extends Command
         $assetsVersionUpdater->incrementVersion($input->getArgument('delta'));
 
         $output->writeln('Done. New value for <info>'.$this->parameterName.'</info> is <info>'.$assetsVersionUpdater->getVersion().'</info>. Clearing of <info>prod</info> cache is required.');
+
+        self::SUCCESS;
     }
 }
