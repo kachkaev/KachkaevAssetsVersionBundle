@@ -51,6 +51,6 @@ class IncrementCommand extends Command
 
         $output->writeln('Done. New value for <info>'.$this->parameterName.'</info> is <info>'.$assetsVersionUpdater->getVersion().'</info>. Clearing of <info>prod</info> cache is required.');
 
-        self::SUCCESS;
+        return self::SUCCESS;
     }
 }
