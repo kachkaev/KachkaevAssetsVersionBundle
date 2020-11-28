@@ -7,7 +7,7 @@ KachkaevAssetsVersionBundle
 [![Build Status](https://secure.travis-ci.org/kachkaev/KachkaevAssetsVersionBundle.png)](http://travis-ci.org/kachkaev/KachkaevAssetsVersionBundle)
 [![Coverage Status](https://coveralls.io/repos/kachkaev/KachkaevAssetsVersionBundle/badge.svg?branch=master&service=github)](https://coveralls.io/github/kachkaev/KachkaevAssetsVersionBundle?branch=master)
 
-## **⚠️ The repo is no longer maintained**<br/>See [its forks](https://github.com/kachkaev/KachkaevAssetsVersionBundle/network/members), e.g. https://github.com/grizzlylab/KachkaevAssetsVersionBundle
+## **⚠️ The repo is no longer maintained**<br/>See [its forks](https://github.com/kachkaev/KachkaevAssetsVersionBundle/network/members), e.g. [grizzlylab/KachkaevAssetsVersionBundle](https://github.com/grizzlylab/KachkaevAssetsVersionBundle)
 
 Updating the assets version manually at each deploy is a real pain. This Symfony2 & Symfony3 bundle automates the process and thus makes your life a bit happier.
 
