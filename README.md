@@ -6,10 +6,8 @@ KachkaevAssetsVersionBundle
 [![License](https://poser.pugx.org/kachkaev/assets-version-bundle/license)](https://packagist.org/packages/kachkaev/assets-version-bundle)
 [![Build Status](https://secure.travis-ci.org/kachkaev/KachkaevAssetsVersionBundle.png)](http://travis-ci.org/kachkaev/KachkaevAssetsVersionBundle)
 [![Coverage Status](https://coveralls.io/repos/kachkaev/KachkaevAssetsVersionBundle/badge.svg?branch=master&service=github)](https://coveralls.io/github/kachkaev/KachkaevAssetsVersionBundle?branch=master)
-[![Versioneye Status](https://www.versioneye.com/user/projects/565cc33cb6f5ff0034000001/badge.svg)](https://www.versioneye.com/user/projects/565cc33cb6f5ff0034000001)
-[![SensioLabsInsight](https://insight.sensiolabs.com/projects/efebcc05-5f4d-491b-9600-ba8e3eaf141b/mini.png)](https://insight.sensiolabs.com/projects/efebcc05-5f4d-491b-9600-ba8e3eaf141b)
 
-[![Donate](https://img.shields.io/badge/donate-paypal-blue.svg?style=flat-rounded)](https://paypal.me/kachkaev/5gbp) 🍺
+## **⚠️ The repo is no longer maintained**<br/>See [its forks](https://github.com/kachkaev/KachkaevAssetsVersionBundle/network/members), e.g. https://github.com/grizzlylab/KachkaevAssetsVersionBundle
 
 Updating the assets version manually at each deploy is a real pain. This Symfony2 & Symfony3 bundle automates the process and thus makes your life a bit happier.
 
