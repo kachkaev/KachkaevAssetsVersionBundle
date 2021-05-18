@@ -30,11 +30,11 @@
 	],
 	"require" : {
 		"php" : "^7.4",
-		"symfony/framework-bundle" : "^5.1"
+		"symfony/framework-bundle" : "^5.2"
 	},
 	"require-dev" : {
-		"symfony/filesystem" : "^5.1",
-		"symfony/finder" : "^5.1",
+		"symfony/filesystem" : "^5.2",
+		"symfony/finder" : "^5.2",
 		"phpunit/phpunit": "~9.4"
 	},
     "scripts": {
