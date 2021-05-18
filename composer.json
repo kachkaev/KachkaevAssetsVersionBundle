@@ -1,7 +1,7 @@
 {
-	"name" : "kachkaev/assets-version-bundle",
+	"name" : "grizzlylab/assets-version-bundle",
 	"type" : "symfony-bundle",
-	"description" : "Automates the process of updating assets version in Symfony2 & Symfony3 projects",
+	"description" : "Automates the process of updating assets version in Symfony 5 projects still using parameters.yml",
 	"keywords" : [
 		"assets",
 		"assetic",
@@ -11,28 +11,33 @@
 		"console",
 		"deploy"
 	],
-	"homepage" : "http://github.com/kachkaev/KachkaevAssetsVersionBundle",
+	"homepage" : "http://github.com/grizzlylab/KachkaevAssetsVersionBundle",
 	"license" : "MIT",
 	"authors" : [{
 			"name" : "Alexander Kachkaev",
 			"email" : "alexander@kachkaev.ru",
 			"homepage" : "http://en.kachkaev.ru/"
-		}, {
+		},
+		{
+			"name" : "Jean-Louis Pirson",
+			"email" : "jl.pirson@grizzlylab.be",
+			"homepage" : "https://www.grizzlylab.be"
+		},
+		{
 			"name" : "Contributors",
-			"homepage" : "https://github.com/kachkaev/KachkaevAssetsVersionBundle/contributors"
+			"homepage" : "https://github.com/grizzlylab/KachkaevAssetsVersionBundle/contributors"
 		}
 	],
 	"require" : {
-		"php" : ">=5.3.2",
-		"symfony/framework-bundle" : "~2.3|~3.0"
+		"php" : "^7.4",
+		"symfony/framework-bundle" : "^5.2"
 	},
 	"require-dev" : {
-		"symfony/filesystem" : "~2.3|~3.0",
-		"symfony/finder" : "~2.3|~3.0",
-		"satooshi/php-coveralls": "~1.0"
+		"symfony/filesystem" : "^5.2",
+		"symfony/finder" : "^5.2",
+		"phpunit/phpunit": "~9.4"
 	},
     "scripts": {
-        "coveralls": "coveralls -v; exit 0",
         "phpunit": "phpunit -c phpunit.xml.dist; exit 0"
     },
 	"suggest" : {
@@ -42,10 +47,5 @@
         "psr-4": {
             "Kachkaev\\AssetsVersionBundle\\": ""
         }
-	},
-	"extra" : {
-		"branch-alias" : {
-			"dev-master" : "2.0-dev"
-		}
 	}
 }

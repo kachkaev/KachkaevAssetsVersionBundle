@@ -2,18 +2,36 @@
 
 namespace Kachkaev\AssetsVersionBundle\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-
+use Kachkaev\AssetsVersionBundle\AssetsVersionManager;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class SetCommand extends ContainerAwareCommand
+class SetCommand extends Command
 {
-    protected function configure()
+    private AssetsVersionManager $assetsVersionManager;
+    private string $parameterName;
+    private string $filePath;
+
+    /**
+     * SetCommand constructor.
+     *
+     * @param AssetsVersionManager $assetsVersionManager
+     * @param string               $parameterName
+     * @param string               $filePath
+     */
+    public function __construct(AssetsVersionManager $assetsVersionManager, string $parameterName, string $filePath)
+    {
+        parent::__construct();
+        $this->assetsVersionManager = $assetsVersionManager;
+        $this->parameterName = $parameterName;
+        $this->filePath = $filePath;
+    }
+
+    protected function configure(): void
     {
         $this
-            ->setName('assets-version:set')
             ->setDescription('Sets assets version parameter to a given value')
             ->addArgument(
                     'value',
@@ -23,14 +41,16 @@ class SetCommand extends ContainerAwareCommand
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
 
-        $output->writeln('Setting parameter <info>'.$this->getContainer()->getParameter('kachkaev_assets_version.parameter_name').'</info> in <info>'.basename($this->getContainer()->getParameter('kachkaev_assets_version.file_path')).'</info> to <info>'.var_export($input->getArgument('value'), true).'</info>...');
+        $output->writeln('Setting parameter <info>'.$this->parameterName.'</info> in <info>'.basename($this->filePath).'</info> to <info>'.var_export($input->getArgument('value'), true).'</info>...');
 
-        $assetsVersionUpdater = $this->getContainer()->get('kachkaev_assets_version.assets_version_manager');
+        $assetsVersionUpdater = $this->assetsVersionManager;
         $assetsVersionUpdater->setVersion($input->getArgument('value'));
 
         $output->writeln('Done. Clearing of <info>prod</info> cache is required.');
+
+        return self::SUCCESS;
     }
 }

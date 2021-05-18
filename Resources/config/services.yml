@@ -1,0 +1,15 @@
+services:
+  Kachkaev\AssetsVersionBundle\Command\IncrementCommand:
+    arguments:
+      - '@kachkaev_assets_version.assets_version_manager'
+      - '%kachkaev_assets_version.parameter_name%'
+      - '%kachkaev_assets_version.file_path%'
+    tags:
+      - { name: 'console.command', command: 'assets-version:increment' }
+  Kachkaev\AssetsVersionBundle\Command\SetCommand:
+    arguments:
+      - '@kachkaev_assets_version.assets_version_manager'
+      - '%kachkaev_assets_version.parameter_name%'
+      - '%kachkaev_assets_version.file_path%'
+    tags:
+      - { name: 'console.command', command: 'assets-version:set' }

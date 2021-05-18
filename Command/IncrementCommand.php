@@ -2,18 +2,36 @@
 
 namespace Kachkaev\AssetsVersionBundle\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-
+use Kachkaev\AssetsVersionBundle\AssetsVersionManager;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class IncrementCommand extends ContainerAwareCommand
+class IncrementCommand extends Command
 {
-    protected function configure()
+    private AssetsVersionManager $assetsVersionManager;
+    private string $parameterName;
+    private string $filePath;
+
+    /**
+     * IncrementCommand constructor.
+     *
+     * @param AssetsVersionManager $assetsVersionManager
+     * @param string               $parameterName
+     * @param string               $filePath
+     */
+    public function __construct(AssetsVersionManager $assetsVersionManager, string $parameterName, string $filePath)
+    {
+        parent::__construct();
+        $this->assetsVersionManager = $assetsVersionManager;
+        $this->parameterName = $parameterName;
+        $this->filePath = $filePath;
+    }
+
+    protected function configure(): void
     {
         $this
-            ->setName('assets-version:increment')
             ->setDescription('Increments assets version parameter')
             ->addArgument(
                     'delta',
@@ -24,13 +42,15 @@ class IncrementCommand extends ContainerAwareCommand
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
-        $output->writeln('Incrementing parameter <info>'.$this->getContainer()->getParameter('kachkaev_assets_version.parameter_name').'</info> in <info>'.basename($this->getContainer()->getParameter('kachkaev_assets_version.file_path')).'</info> by <info>'.var_export($input->getArgument('delta'), true).'</info>...');
+        $output->writeln('Incrementing parameter <info>'.$this->parameterName.'</info> in <info>'.basename($this->filePath).'</info> by <info>'.var_export($input->getArgument('delta'), true).'</info>...');
 
-        $assetsVersionUpdater = $this->getContainer()->get('kachkaev_assets_version.assets_version_manager');
+        $assetsVersionUpdater = $this->assetsVersionManager;
         $assetsVersionUpdater->incrementVersion($input->getArgument('delta'));
 
-        $output->writeln('Done. New value for <info>'.$this->getContainer()->getParameter('kachkaev_assets_version.parameter_name').'</info> is <info>'.$assetsVersionUpdater->getVersion().'</info>. Clearing of <info>prod</info> cache is required.');
+        $output->writeln('Done. New value for <info>'.$this->parameterName.'</info> is <info>'.$assetsVersionUpdater->getVersion().'</info>. Clearing of <info>prod</info> cache is required.');
+
+        return self::SUCCESS;
     }
 }

@@ -1,5 +1,4 @@
 composer.lock
-code-coverage
 build
 vendor
 phpunit.xml
